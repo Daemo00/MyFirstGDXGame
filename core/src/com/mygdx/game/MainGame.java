@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class Drop extends Game {
+public class MainGame extends Game {
 
     public SpriteBatch batch;
     public BitmapFont font;
@@ -23,7 +23,9 @@ public class Drop extends Game {
     }
 
     public void dispose() {
+        super.dispose();
         batch.dispose();
         font.dispose();
+        screen.dispose();
     }
 }
