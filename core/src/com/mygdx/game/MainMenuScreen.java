@@ -2,8 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,14 +15,12 @@ import com.mygdx.game.drop.GameScreen;
 
 public class MainMenuScreen implements Screen {
 
-    private final MainGame game;
     private final Stage stage;
     private final int col_width;
     private final int row_height;
     private final Skin mySkin;
 
     MainMenuScreen(final MainGame game) {
-        this.game = game;
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -59,8 +55,7 @@ public class MainMenuScreen implements Screen {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                GameScreen gameScreen = new GameScreen(game);
-                game.setScreen(gameScreen);
+                game.setScreen(new GameScreen(game));
                 return true;
             }
         });
@@ -74,9 +69,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
@@ -103,7 +95,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        game.dispose();
+        mySkin.dispose();
         stage.dispose();
     }
 }
