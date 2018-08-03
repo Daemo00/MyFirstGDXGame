@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.action.ActionScreen;
 import com.mygdx.game.drop.GameScreen;
 
 public class MainMenuScreen implements Screen {
@@ -31,7 +32,7 @@ public class MainMenuScreen implements Screen {
         mySkin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
 
         stage.addActor(createLabel());
-
+        stage.addActor(createActionButton(game));
         stage.addActor(createDropButton(game));
     }
 
@@ -56,6 +57,24 @@ public class MainMenuScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new GameScreen(game));
+                return true;
+            }
+        });
+        return dropGameButton;
+    }
+    private Button createActionButton(final MainGame game) {
+        Button dropGameButton = new TextButton("Actions game", mySkin, "small");
+        dropGameButton.setSize(col_width * 4, row_height);
+        dropGameButton.setPosition(col_width * 7, Gdx.graphics.getHeight() - row_height * 3);
+        dropGameButton.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new ActionScreen());
                 return true;
             }
         });
