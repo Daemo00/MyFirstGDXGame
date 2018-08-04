@@ -1,26 +1,34 @@
 package com.mygdx.game.action;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
+import com.mygdx.game.GenericGameScreen;
+import com.mygdx.game.MainGame;
+
+import static com.mygdx.game.MainMenuScreen.col_width;
+import static com.mygdx.game.MainMenuScreen.row_height;
 
 
-public class ActionScreen implements Screen {
-    private Stage stage;
+public class ActionScreen extends GenericGameScreen {
+    private final Group lapsLabelContainer;
+    private final Label lapsLabel;
+    private static int lapsCount;
 
-    public ActionScreen(){
-        stage = new Stage(new ScreenViewport());
-        Texture texture = new Texture(Gdx.files.absolute("faces/Dinoface.png"));
+    public ActionScreen(MainGame game) {
+        super(game);
+        lapsCount = 3;
+        Texture texture = new Texture(Gdx.files.internal("faces/Dinoface.png"));
 
         int X_left= Gdx.graphics.getWidth()/3-texture.getWidth()/2;
         int X_right = Gdx.graphics.getWidth()*2/3-texture.getWidth()/2;
@@ -49,27 +57,89 @@ public class ActionScreen implements Screen {
         leftBottomTopParallelAction.addAction(Actions.moveTo(X_left,Y_top,1,Interpolation.swingOut));
         leftBottomTopParallelAction.addAction(Actions.rotateBy(90,1));
 
+        RunnableAction updateLapCountAction = new RunnableAction();
+        updateLapCountAction.setRunnable(new Runnable() {
+            @Override
+            public void run () {
+                updateLapsCount();
+            }
+        });
+
         SequenceAction overallSequence = new SequenceAction();
+        overallSequence.addAction(updateLapCountAction);
         overallSequence.addAction(topLeftRightParallelAction);
         overallSequence.addAction(moveBottomRightAction);
         overallSequence.addAction(bottomLeftRightParallelAction);
         overallSequence.addAction(leftBottomTopParallelAction);
 
-        RepeatAction infiniteLoop = new RepeatAction();
-        infiniteLoop.setCount(RepeatAction.FOREVER);
-        infiniteLoop.setAction(overallSequence);
-        image1.addAction(infiniteLoop);
+        RepeatAction loopNbrAction = new RepeatAction();
+        loopNbrAction.setCount(lapsCount);
+        loopNbrAction.setAction(overallSequence);
+
+        lapsLabel = new Label(" Loop :", game.skin);
+        lapsLabel.setPosition(
+                (Gdx.graphics.getWidth() - col_width) / 2,
+                (Gdx.graphics.getHeight() - row_height) / 2);
+        lapsLabel.setSize(col_width, row_height);
+        lapsLabel.setAlignment(Align.center);
+
+        lapsLabelContainer = new Group();
+        lapsLabelContainer.addActor(lapsLabel);
+        lapsLabelContainer.setOrigin(
+                lapsLabel.getX() + col_width / 2,
+                lapsLabel.getY() + row_height / 2);
+
+        stage.addActor(lapsLabelContainer);
+
+        RunnableAction completedAction = new RunnableAction();
+        completedAction.setRunnable(new Runnable() {
+            @Override
+            public void run () {
+                finished();
+            }
+        });
+
+        image1.addAction(Actions.sequence(loopNbrAction, completedAction));
+
+    }
+
+    private void updateLapsCount () {
+        lapsCount--;
+        lapsLabelContainer.setScale(0);
+        SequenceAction FadingSequenceAction = new SequenceAction();
+        FadingSequenceAction.addAction(Actions.fadeIn(1));
+        FadingSequenceAction.addAction(Actions.fadeOut(2));
+
+        ParallelAction parallelAction = new ParallelAction();
+
+        lapsLabel.setText("Laps : " + (lapsCount + 1));
+        parallelAction.addAction(Actions.scaleTo(5, 5, 4));
+        parallelAction.addAction(FadingSequenceAction);
+        lapsLabelContainer.addAction(parallelAction);
+    }
+
+    private void finished () {
+        lapsLabelContainer.setScale(0);
+        SequenceAction FadingSequenceAction = new SequenceAction();
+        FadingSequenceAction.addAction(Actions.fadeIn(1));
+
+        ParallelAction parallelAction = new ParallelAction();
+
+        lapsLabel.setText(" Finished!");
+        parallelAction.addAction(Actions.rotateBy(360, 3));
+        parallelAction.addAction(Actions.scaleBy(5, 5, 4, Interpolation.bounceOut));
+        parallelAction.addAction(FadingSequenceAction);
+        lapsLabelContainer.addAction(parallelAction);
     }
 
     @Override
     public void show() {
-
+        super.show();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render(delta);
         stage.act();
         stage.draw();
     }
@@ -96,6 +166,6 @@ public class ActionScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        super.dispose();
     }
 }

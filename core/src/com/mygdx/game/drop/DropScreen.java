@@ -2,10 +2,8 @@ package com.mygdx.game.drop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
@@ -13,14 +11,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class GameScreen implements Screen {
-    private final MainGame game;
+public class DropScreen extends GenericGameScreen {
 	private OrthographicCamera camera;
 	private Vector3 touchPos = new Vector3();
 	private Music rainMusic;
@@ -53,8 +51,8 @@ public class GameScreen implements Screen {
 	private Map<String, Integer> dropsGathered;
 	private long lastRaindropTime;
 
-    public GameScreen(final MainGame game) {
-        this.game = game;
+    public DropScreen(MainGame game) {
+        super(game);
 
         initBucket();
         initRaindrops();
@@ -115,17 +113,16 @@ public class GameScreen implements Screen {
 
     @Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render(delta);
 
 		camera.update();
-		game.batch.setProjectionMatrix(camera.combined);
+        stage.getBatch().setProjectionMatrix(camera.combined);
 
-		game.batch.begin();
+        stage.getBatch().begin();
         renderScore();
         renderRaindrops();
         renderBucket();
-        game.batch.end();
+        stage.getBatch().end();
 
         if(TimeUtils.nanoTime() - lastRaindropTime > 500000000)
             spawnRaindrop();
@@ -171,19 +168,19 @@ public class GameScreen implements Screen {
         for (int i = 0; i < raindropRectangles.size; i++) {
             Rectangle raindrop = raindropRectangles.get(i);
             Integer raindropIndex = raindropIndexes.get(i);
-            game.batch.draw(raindropImages.get(raindropIndex), raindrop.x, raindrop.y);
+            stage.getBatch().draw(raindropImages.get(raindropIndex), raindrop.x, raindrop.y);
         }
     }
 
     private void renderBucket() {
-        game.batch.draw(bucketImage, bucket.x, bucket.y);
+        stage.getBatch().draw(bucketImage, bucket.x, bucket.y);
     }
 
     private void renderScore() {
         float span = Gdx.graphics.getWidth() / raindropNames.size;
         float nameX = 0;
         for (String name : raindropNames) {
-            game.font.draw(game.batch, name + ": " + dropsGathered.get(name), nameX, 480);
+            game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480);
             nameX += span;
         }
     }
@@ -213,6 +210,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        super.show();
         rainMusic.play();
     }
 
