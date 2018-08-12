@@ -12,11 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.action.ActionScreen;
+import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.drop.DropScreen;
+
+import java.util.ArrayList;
 
 public class MainMenuScreen implements Screen {
 
     private final Stage stage;
+    private static int currX;
     public static int col_width;
     public static int row_height;
     private MainGame game;
@@ -25,54 +29,49 @@ public class MainMenuScreen implements Screen {
         this.game = game;
 
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-        row_height = Gdx.graphics.getWidth() / 12;
-        col_width = Gdx.graphics.getWidth() / 12;
+        row_height = stage.getViewport().getScreenWidth() / 12;
+        col_width = stage.getViewport().getScreenWidth() / 12;
 
         stage.addActor(createLabel());
-        stage.addActor(createActionButton(game));
-        stage.addActor(createDropButton(game));
+
+        ArrayList<GenericGameScreen> gameScreens = new ArrayList<GenericGameScreen>();
+        gameScreens.add(new ActionScreen(game, this));
+        gameScreens.add(new DropScreen(game, this));
+        gameScreens.add(new CameraScreen(game, this));
+
+        for (GenericGameScreen gameScreen : gameScreens) {
+            stage.addActor(createGameButton(gameScreen));
+            currX += col_width;
+        }
+        currX = 0;
     }
 
     private Label createLabel() {
         Label title = new Label("My games", game.skin);
-        title.setSize(Gdx.graphics.getWidth(), row_height * 2);
+        title.setSize(stage.getViewport().getScreenWidth(), row_height * 2);
         title.setPosition(0, Gdx.graphics.getHeight() - row_height * 2);
         title.setAlignment(Align.center);
         return title;
     }
 
-    private Button createDropButton(final MainGame game) {
-        Button dropGameButton = new TextButton("Drops game", game.skin, "small");
-        dropGameButton.setSize(col_width * 4, row_height);
-        dropGameButton.setPosition(col_width, Gdx.graphics.getHeight() - row_height * 3);
+    private Button createGameButton(final GenericGameScreen gameScreen) {
+        TextButton dropGameButton = new TextButton(gameScreen.title, this.game.skin);
+        dropGameButton.setSize(col_width, row_height);
+        dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
+        Gdx.app.log("DBG", "Button " + dropGameButton.getText() + " label height: " + dropGameButton.getLabel().getHeight());
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        style.up = this.game.skin.getDrawable("default-rect");
+        style.down = this.game.skin.getDrawable("default-rect-down");
+        style.font = this.game.skin.getFont("default-font");
+        dropGameButton.setStyle(style);
         dropGameButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
+                game.setScreen(gameScreen);
             }
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new DropScreen(game));
-                return true;
-            }
-        });
-        return dropGameButton;
-    }
-    private Button createActionButton(final MainGame game) {
-        Button dropGameButton = new TextButton("Actions game", game.skin, "small");
-        dropGameButton.setSize(col_width * 4, row_height);
-        dropGameButton.setPosition(col_width * 7, Gdx.graphics.getHeight() - row_height * 3);
-        dropGameButton.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new ActionScreen(game));
                 return true;
             }
         });
@@ -81,13 +80,13 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act();
         stage.draw();
     }
 

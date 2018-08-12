@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 
@@ -16,8 +17,8 @@ public class MainGame extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        skin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
-
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin.addRegions(new TextureAtlas("skin/uiskin.atlas"));
         this.setScreen(new MainMenuScreen(this));
     }
 

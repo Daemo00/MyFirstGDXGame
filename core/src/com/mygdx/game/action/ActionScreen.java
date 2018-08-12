@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
 import static com.mygdx.game.MainMenuScreen.col_width;
 import static com.mygdx.game.MainMenuScreen.row_height;
@@ -25,42 +26,43 @@ public class ActionScreen extends GenericGameScreen {
     private final Label lapsLabel;
     private static int lapsCount;
 
-    public ActionScreen(MainGame game) {
-        super(game);
+    public ActionScreen(MainGame game, MainMenuScreen mainMenuScreen) {
+        super(game, "Actions", mainMenuScreen);
+
         lapsCount = 3;
         Texture texture = new Texture(Gdx.files.internal("faces/Dinoface.png"));
 
-        int X_left= Gdx.graphics.getWidth()/3-texture.getWidth()/2;
-        int X_right = Gdx.graphics.getWidth()*2/3-texture.getWidth()/2;
-        int Y_top = Gdx.graphics.getHeight()*2/3-texture.getHeight()/2;
-        int Y_bottom = Gdx.graphics.getHeight()/3-texture.getHeight()/2;
+        int X_left = Gdx.graphics.getWidth() / 3 - texture.getWidth() / 2;
+        int X_right = Gdx.graphics.getWidth() * 2 / 3 - texture.getWidth() / 2;
+        int Y_top = Gdx.graphics.getHeight() * 2 / 3 - texture.getHeight() / 2;
+        int Y_bottom = Gdx.graphics.getHeight() / 3 - texture.getHeight() / 2;
 
         Image image1 = new Image(texture);
-        image1.setPosition(X_left,Y_top);
-        image1.setOrigin(image1.getWidth()/2,image1.getHeight()/2);
+        image1.setPosition(X_left, Y_top);
+        image1.setOrigin(image1.getWidth() / 2, image1.getHeight() / 2);
         stage.addActor(image1);
 
         ParallelAction topLeftRightParallelAction = new ParallelAction();
-        topLeftRightParallelAction.addAction(Actions.moveTo(X_right,Y_top,1, Interpolation.exp5Out));
-        topLeftRightParallelAction.addAction(Actions.scaleTo(2,2,1,Interpolation.exp5Out));
+        topLeftRightParallelAction.addAction(Actions.moveTo(X_right, Y_top, 1, Interpolation.exp5Out));
+        topLeftRightParallelAction.addAction(Actions.scaleTo(2, 2, 1, Interpolation.exp5Out));
 
         MoveToAction moveBottomRightAction = new MoveToAction();
-        moveBottomRightAction.setPosition(X_right,Y_bottom);
+        moveBottomRightAction.setPosition(X_right, Y_bottom);
         moveBottomRightAction.setDuration(1);
         moveBottomRightAction.setInterpolation(Interpolation.smooth);
 
         ParallelAction bottomLeftRightParallelAction = new ParallelAction();
-        bottomLeftRightParallelAction.addAction(Actions.moveTo(X_left,Y_bottom,1,Interpolation.sineOut));
-        bottomLeftRightParallelAction.addAction(Actions.scaleTo(1,1,1));
+        bottomLeftRightParallelAction.addAction(Actions.moveTo(X_left, Y_bottom, 1, Interpolation.sineOut));
+        bottomLeftRightParallelAction.addAction(Actions.scaleTo(1, 1, 1));
 
         ParallelAction leftBottomTopParallelAction = new ParallelAction();
-        leftBottomTopParallelAction.addAction(Actions.moveTo(X_left,Y_top,1,Interpolation.swingOut));
-        leftBottomTopParallelAction.addAction(Actions.rotateBy(90,1));
+        leftBottomTopParallelAction.addAction(Actions.moveTo(X_left, Y_top, 1, Interpolation.swingOut));
+        leftBottomTopParallelAction.addAction(Actions.rotateBy(90, 1));
 
         RunnableAction updateLapCountAction = new RunnableAction();
         updateLapCountAction.setRunnable(new Runnable() {
             @Override
-            public void run () {
+            public void run() {
                 updateLapsCount();
             }
         });
@@ -94,7 +96,7 @@ public class ActionScreen extends GenericGameScreen {
         RunnableAction completedAction = new RunnableAction();
         completedAction.setRunnable(new Runnable() {
             @Override
-            public void run () {
+            public void run() {
                 finished();
             }
         });
@@ -103,7 +105,7 @@ public class ActionScreen extends GenericGameScreen {
 
     }
 
-    private void updateLapsCount () {
+    private void updateLapsCount() {
         lapsCount--;
         lapsLabelContainer.setScale(0);
         SequenceAction FadingSequenceAction = new SequenceAction();
@@ -118,7 +120,7 @@ public class ActionScreen extends GenericGameScreen {
         lapsLabelContainer.addAction(parallelAction);
     }
 
-    private void finished () {
+    private void finished() {
         lapsLabelContainer.setScale(0);
         SequenceAction FadingSequenceAction = new SequenceAction();
         FadingSequenceAction.addAction(Actions.fadeIn(1));
@@ -139,9 +141,10 @@ public class ActionScreen extends GenericGameScreen {
 
     @Override
     public void render(float delta) {
-        super.render(delta);
+        preRender();
         stage.act();
         stage.draw();
+        postRender();
     }
 
     @Override

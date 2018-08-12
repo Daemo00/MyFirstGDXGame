@@ -13,7 +13,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +32,11 @@ public class DropScreen extends GenericGameScreen {
 	/**
 	 * Array containing the name of each raindrop
 	 */
-	private Array<String> raindropNames;
+    private ArrayList<String> raindropNames;
 	/**
 	 * Array containing the image of each raindrop
 	 */
-	private Array<Texture> raindropImages;
+    private ArrayList<Texture> raindropImages;
 
 	/**
 	 * Array containing the rectangle of each generated raindrop
@@ -51,8 +53,8 @@ public class DropScreen extends GenericGameScreen {
 	private Map<String, Integer> dropsGathered;
 	private long lastRaindropTime;
 
-    public DropScreen(MainGame game) {
-        super(game);
+    public DropScreen(MainGame game, MainMenuScreen mainMenuScreen) {
+        super(game, "Drops", mainMenuScreen);
 
         initBucket();
         initRaindrops();
@@ -82,7 +84,7 @@ public class DropScreen extends GenericGameScreen {
 
     private void initRaindrops() {
         // Load the images for the droplet and the bucket, 64x64 pixels each
-        raindropNames = new Array<String>();
+        raindropNames = new ArrayList<String>();
         raindropNames.add("Ale");
         raindropNames.add("Dino");
         raindropNames.add("Fra");
@@ -96,7 +98,7 @@ public class DropScreen extends GenericGameScreen {
             dropsGathered.put(rainropName, 0);
         }
 
-        raindropImages = new Array<Texture>();
+        raindropImages = new ArrayList<Texture>();
         raindropImages.add(new Texture(Gdx.files.internal("faces/Aleface.png")));
         raindropImages.add(new Texture(Gdx.files.internal("faces/Dinoface.png")));
         raindropImages.add(new Texture(Gdx.files.internal("faces/Fraface.png")));
@@ -113,7 +115,7 @@ public class DropScreen extends GenericGameScreen {
 
     @Override
 	public void render(float delta) {
-        super.render(delta);
+        preRender();
 
 		camera.update();
         stage.getBatch().setProjectionMatrix(camera.combined);
@@ -132,6 +134,7 @@ public class DropScreen extends GenericGameScreen {
         for (int i = 0; i < raindropRectangles.size; i++) {
             manageRaindrops(i);
 		}
+        postRender();
 	}
 
     private void manageBucket() {
@@ -177,7 +180,7 @@ public class DropScreen extends GenericGameScreen {
     }
 
     private void renderScore() {
-        float span = Gdx.graphics.getWidth() / raindropNames.size;
+        float span = camera.viewportWidth / raindropNames.size();
         float nameX = 0;
         for (String name : raindropNames) {
             game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480);
@@ -204,7 +207,7 @@ public class DropScreen extends GenericGameScreen {
 		raindrop.width = 64;
 		raindrop.height = 64;
 		raindropRectangles.add(raindrop);
-        raindropIndexes.add(MathUtils.random(0, raindropImages.size - 1));
+        raindropIndexes.add(MathUtils.random(0, raindropImages.size() - 1));
 		lastRaindropTime = TimeUtils.nanoTime();
 	}
 
@@ -231,7 +234,7 @@ public class DropScreen extends GenericGameScreen {
 
     @Override
     public void hide() {
-
+        rainMusic.stop();
     }
 
     @Override
