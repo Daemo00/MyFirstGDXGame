@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.action.ActionScreen;
 import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.drop.DropScreen;
+import com.mygdx.game.parallax.ParallaxScreen;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new ActionScreen(game, this));
         gameScreens.add(new DropScreen(game, this));
         gameScreens.add(new CameraScreen(game, this));
+        gameScreens.add(new ParallaxScreen(game, this));
 
         for (GenericGameScreen gameScreen : gameScreens) {
             stage.addActor(createGameButton(gameScreen));
