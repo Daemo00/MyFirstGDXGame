@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.GenericGameScreen;
@@ -183,7 +184,8 @@ public class DropScreen extends GenericGameScreen {
         float span = camera.viewportWidth / raindropNames.size();
         float nameX = 0;
         for (String name : raindropNames) {
-            game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480);
+            game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480, span, Align.center, true);
+            // game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480);
             nameX += span;
         }
     }

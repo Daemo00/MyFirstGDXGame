@@ -38,14 +38,14 @@ public class GenericGameScreen implements Screen {
     }
 
     private Button createBackButton() {
-        TextButton backGameButton = new TextButton("Back", game.skin);
-        backGameButton.setSize(col_width, row_height);
-        backGameButton.setPosition(Gdx.graphics.getWidth() - col_width, Gdx.graphics.getHeight() - row_height);
-        Gdx.app.log("DBG", "Button " + backGameButton.getText() + " label height: " + backGameButton.getLabel().getHeight());
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = this.game.skin.getDrawable("default-rect");
         style.down = this.game.skin.getDrawable("default-rect-down");
-        style.font = this.game.skin.getFont("default-font");
+        style.font = this.game.font;
+        TextButton backGameButton = new TextButton("Back", style);
+        backGameButton.setSize(col_width, row_height);
+        backGameButton.setPosition(Gdx.graphics.getWidth() - col_width, Gdx.graphics.getHeight() - row_height);
+        Gdx.app.log("DBG", "Button " + backGameButton.getText() + " label height: " + backGameButton.getLabel().getHeight());
         backGameButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -58,6 +58,7 @@ public class GenericGameScreen implements Screen {
                 return true;
             }
         });
+        backGameButton.getLabel().setWrap(true);
         return backGameButton;
     }
 

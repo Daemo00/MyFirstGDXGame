@@ -48,6 +48,9 @@ public class MainMenuScreen implements Screen {
 
     private Label createLabel() {
         Label title = new Label("My games", game.skin);
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = this.game.font;
+        title.setStyle(style);
         title.setSize(stage.getViewport().getScreenWidth(), row_height * 2);
         title.setPosition(0, Gdx.graphics.getHeight() - row_height * 2);
         title.setAlignment(Align.center);
@@ -62,7 +65,7 @@ public class MainMenuScreen implements Screen {
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = this.game.skin.getDrawable("default-rect");
         style.down = this.game.skin.getDrawable("default-rect-down");
-        style.font = this.game.skin.getFont("default-font");
+        style.font = this.game.font;
         dropGameButton.setStyle(style);
         dropGameButton.addListener(new InputListener() {
             @Override
@@ -75,6 +78,7 @@ public class MainMenuScreen implements Screen {
                 return true;
             }
         });
+        dropGameButton.getLabel().setWrap(true);
         return dropGameButton;
     }
 
