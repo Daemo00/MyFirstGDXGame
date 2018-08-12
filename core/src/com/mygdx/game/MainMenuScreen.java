@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.action.ActionScreen;
 import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.drop.DropScreen;
+import com.mygdx.game.multiplexing.Multiplexing;
 import com.mygdx.game.parallax.ParallaxScreen;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new DropScreen(game, this));
         gameScreens.add(new CameraScreen(game, this));
         gameScreens.add(new ParallaxScreen(game, this));
+        gameScreens.add(new Multiplexing(game, this));
 
         for (GenericGameScreen gameScreen : gameScreens) {
             stage.addActor(createGameButton(gameScreen));
@@ -65,8 +67,9 @@ public class MainMenuScreen implements Screen {
         dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
         Gdx.app.log("DBG", "Button " + dropGameButton.getText() + " label height: " + dropGameButton.getLabel().getHeight());
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = this.game.skin.getDrawable("default-rect");
-        style.down = this.game.skin.getDrawable("default-rect-down");
+        style.up = this.game.skin.getDrawable("button");
+        style.down = this.game.skin.getDrawable("button-down");
+        style.over = this.game.skin.getDrawable("button-over");
         style.font = this.game.font;
         dropGameButton.setStyle(style);
         dropGameButton.addListener(new InputListener() {

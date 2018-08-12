@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -20,6 +21,8 @@ public class GenericGameScreen implements Screen {
     protected String title;
     private Stage HUDStage;
     private MainMenuScreen mainMenuScreen;
+    protected InputMultiplexer multiplexer;
+
 
     public GenericGameScreen(MainGame game, String title, MainMenuScreen mainMenuScreen) {
         this.game = game;
@@ -29,18 +32,20 @@ public class GenericGameScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         HUDStage = new Stage(new ScreenViewport());
         HUDStage.addActor(createBackButton());
+        multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(HUDStage);
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
-        Gdx.input.setInputProcessor(HUDStage);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private Button createBackButton() {
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = this.game.skin.getDrawable("default-rect");
-        style.down = this.game.skin.getDrawable("default-rect-down");
+        style.up = this.game.skin.getDrawable("button");
+        style.down = this.game.skin.getDrawable("button-down");
         style.font = this.game.font;
         TextButton backGameButton = new TextButton("Back", style);
         backGameButton.setSize(col_width, row_height);
