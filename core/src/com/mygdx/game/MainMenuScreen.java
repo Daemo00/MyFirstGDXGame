@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.action.ActionScreen;
 import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.drop.DropScreen;
+import com.mygdx.game.invaders.screens.MainMenu;
 import com.mygdx.game.multiplexing.Multiplexing;
 import com.mygdx.game.parallax.ParallaxScreen;
 
@@ -36,14 +37,15 @@ public class MainMenuScreen implements Screen {
 
         stage.addActor(createLabel());
 
-        ArrayList<GenericGameScreen> gameScreens = new ArrayList<GenericGameScreen>();
+        ArrayList<Screen> gameScreens = new ArrayList<Screen>();
         gameScreens.add(new ActionScreen(game, this));
         gameScreens.add(new DropScreen(game, this));
         gameScreens.add(new CameraScreen(game, this));
         gameScreens.add(new ParallaxScreen(game, this));
         gameScreens.add(new Multiplexing(game, this));
+        gameScreens.add(new MainMenu(game));
 
-        for (GenericGameScreen gameScreen : gameScreens) {
+        for (Screen gameScreen : gameScreens) {
             stage.addActor(createGameButton(gameScreen));
             currX += col_width;
         }
@@ -61,8 +63,14 @@ public class MainMenuScreen implements Screen {
         return title;
     }
 
-    private Button createGameButton(final GenericGameScreen gameScreen) {
-        TextButton dropGameButton = new TextButton(gameScreen.title, this.game.skin);
+    private Button createGameButton(final Screen gameScreen) {
+        TextButton dropGameButton;
+        if (gameScreen instanceof GenericGameScreen) {
+            GenericGameScreen genericGameScreen = (GenericGameScreen) gameScreen;
+            dropGameButton = new TextButton(genericGameScreen.title, this.game.skin);
+        } else {
+            dropGameButton = new TextButton("Invaders", this.game.skin);
+        }
         dropGameButton.setSize(col_width, row_height);
         dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
         Gdx.app.log("DBG", "Button " + dropGameButton.getText() + " label height: " + dropGameButton.getLabel().getHeight());
