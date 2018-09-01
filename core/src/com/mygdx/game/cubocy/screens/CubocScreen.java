@@ -1,13 +1,15 @@
 
 package com.mygdx.game.cubocy.screens;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
+import com.mygdx.game.GenericGameScreen;
+import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
-public abstract class CubocScreen implements Screen {
-    Game game;
+public abstract class CubocScreen extends GenericGameScreen {
+    MainGame game;
 
-    CubocScreen(Game game) {
+    CubocScreen(MainGame game, MainMenuScreen mainMenuScreen) {
+        super(game, "Cubocy", mainMenuScreen);
         this.game = game;
     }
 
@@ -16,7 +18,15 @@ public abstract class CubocScreen implements Screen {
     }
 
     @Override
+    public void render(float delta) {
+        super.render(delta);
+        preRender();
+        postRender();
+    }
+
+    @Override
     public void show() {
+        super.show();
     }
 
     @Override

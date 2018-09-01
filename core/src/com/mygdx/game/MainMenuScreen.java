@@ -16,7 +16,6 @@ import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.cubocy.screens.CubocyMenu;
 import com.mygdx.game.drop.DropScreen;
 import com.mygdx.game.invaders.screens.InvadersMenu;
-import com.mygdx.game.invaders.screens.InvadersScreen;
 import com.mygdx.game.multiplexing.Multiplexing;
 import com.mygdx.game.parallax.ParallaxScreen;
 
@@ -46,7 +45,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new ParallaxScreen(game, this));
         gameScreens.add(new Multiplexing(game, this));
         gameScreens.add(new InvadersMenu(game, this));
-        gameScreens.add(new CubocyMenu(game));
+        gameScreens.add(new CubocyMenu(game, this));
 
         for (Screen gameScreen : gameScreens) {
             stage.addActor(createGameButton(gameScreen));
@@ -71,11 +70,11 @@ public class MainMenuScreen implements Screen {
         if (gameScreen instanceof GenericGameScreen) {
             GenericGameScreen genericGameScreen = (GenericGameScreen) gameScreen;
             dropGameButton = new TextButton(genericGameScreen.title, this.game.skin);
-        } else if (gameScreen instanceof InvadersScreen) {
-            dropGameButton = new TextButton("Invaders", this.game.skin);
         } else {
-            dropGameButton = new TextButton("Cubocy", this.game.skin);
+            Gdx.app.log("ERROR", "Screen should be instance of GenericGameScreen");
+            return null;
         }
+
         dropGameButton.setSize(col_width, row_height);
         dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();

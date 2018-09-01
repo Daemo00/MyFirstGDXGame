@@ -20,7 +20,7 @@ public class GenericGameScreen implements Screen {
     protected Stage stage;
     protected String title;
     private Stage HUDStage;
-    private MainMenuScreen mainMenuScreen;
+    protected MainMenuScreen mainMenuScreen;
     protected InputMultiplexer multiplexer;
 
 
