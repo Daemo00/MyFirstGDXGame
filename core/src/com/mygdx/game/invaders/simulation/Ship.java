@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 public class Ship extends ModelInstance {
     public static final float SHIP_RADIUS = 1;
     public static final float SHIP_VELOCITY = 20;
+    public static final float SHIP_SHOT_FREQUENCY = 0.2f; // in seconds
     public int lives = 3;
     public boolean isExploding = false;
     private float explodeTime = 0;

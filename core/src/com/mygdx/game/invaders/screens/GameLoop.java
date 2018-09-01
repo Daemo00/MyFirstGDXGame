@@ -108,7 +108,7 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
 
         if (invaders.getController() != null) {
             if (buttonsPressed > 0) {
-                simulation.shot();
+                simulation.shipShot();
             }
 
             // if the left stick moved, move the ship
@@ -126,7 +126,8 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
             simulation.moveShipLeft(delta, 0.5f);
         if (Gdx.input.isKeyPressed(Keys.DPAD_RIGHT) || Gdx.input.isKeyPressed(Keys.D))
             simulation.moveShipRight(delta, 0.5f);
-        if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.SPACE)) simulation.shot();
+        if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.SPACE))
+            simulation.shipShot();
     }
 
     @Override

@@ -50,7 +50,7 @@ public class Simulation implements Disposable {
     public transient SimulationListener listener;
     public int score;
     public int wave = 1;
-    private Shot shipShot = null;
+    private ArrayList<Shot> shipShots = new ArrayList<Shot>();
     private float multiplier = 1;
     private Model shipModel;
     private Model invaderModel;
@@ -59,6 +59,7 @@ public class Simulation implements Disposable {
     private Model explosionModel;
     private ArrayList<Shot> removedShots = new ArrayList<Shot>();
     private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
+    private long lastShipShot;
 
     public Simulation() {
         populate();
@@ -158,6 +159,7 @@ public class Simulation implements Disposable {
 
         ship = new Ship(shipModel);
         ship.transform.rotate(0, 1, 0, 180);
+        lastShipShot = System.currentTimeMillis();
 
         for (int row = 0; row < 4; row++) {
             for (int column = 0; column < 8; column++) {
@@ -196,22 +198,23 @@ public class Simulation implements Disposable {
 
     private void updateShots(float delta) {
         removedShots.clear();
-        for (int i = 0; i < shots.size(); i++) {
-            Shot shot = shots.get(i);
+        ArrayList<Shot> allShots = new ArrayList<Shot>();
+        allShots.addAll(shots);
+        allShots.addAll(shipShots);
+        for (Shot shot : allShots) {
             shot.update(delta);
             if (shot.hasLeftField) removedShots.add(shot);
         }
 
-        for (int i = 0; i < removedShots.size(); i++)
-            shots.remove(removedShots.get(i));
-
-        if (shipShot != null && shipShot.hasLeftField) shipShot = null;
+        for (Shot removedShot : removedShots) {
+            shots.remove(removedShot);
+            shipShots.remove(removedShot);
+        }
 
         if (Math.random() < 0.01 * multiplier && invaders.size() > 0) {
             int index = (int) (Math.random() * (invaders.size() - 1));
             invaders.get(index).transform.getTranslation(tmpV1);
-            Shot shot = new Shot(shotModel, tmpV1, true);
-            shots.add(shot);
+            shots.add(new Shot(shotModel, tmpV1, true));
             if (listener != null) listener.shot();
         }
     }
@@ -230,21 +233,26 @@ public class Simulation implements Disposable {
     }
 
     private void checkInvaderCollision() {
-        if (shipShot == null) return;
+        if (shipShots.isEmpty()) return;
 
-        for (int j = 0; j < invaders.size(); j++) {
-            Invader invader = invaders.get(j);
+        for (Invader invader : invaders) {
             invader.transform.getTranslation(tmpV1);
-            shipShot.transform.getTranslation(tmpV2);
-            if (tmpV1.dst(tmpV2) < Invader.INVADER_RADIUS) {
-                shots.remove(shipShot);
-                shipShot = null;
-                invaders.remove(invader);
-                explosions.add(new Explosion(explosionModel, tmpV1));
-                if (listener != null) listener.explosion();
-                score += Invader.INVADER_POINTS;
-                break;
+            boolean hit = false;
+            for (Shot shipShot : shipShots) {
+                shipShot.transform.getTranslation(tmpV2);
+                if (tmpV1.dst(tmpV2) < Invader.INVADER_RADIUS) {
+                    shots.remove(shipShot);
+                    shipShots.remove(shipShot);
+                    invaders.remove(invader);
+                    explosions.add(new Explosion(explosionModel, tmpV1));
+                    if (listener != null) listener.explosion();
+                    score += Invader.INVADER_POINTS;
+                    hit = true;
+                    break;
+                }
             }
+            if (hit)
+                break;
         }
     }
 
@@ -315,7 +323,7 @@ public class Simulation implements Disposable {
         if (invaders.size() == 0 && ship.lives > 0) {
             blocks.clear();
             shots.clear();
-            shipShot = null;
+            shipShots.clear();
             ship.transform.getTranslation(tmpV1);
             int lives = ship.lives;
             populate();
@@ -342,11 +350,13 @@ public class Simulation implements Disposable {
         if (tmpV1.x > PLAYFIELD_MAX_X) ship.transform.trn(PLAYFIELD_MAX_X - tmpV1.x, 0, 0);
     }
 
-    public void shot() {
-        if (shipShot == null && !ship.isExploding) {
+    public void shipShot() {
+        if (!ship.isExploding &&
+                System.currentTimeMillis() - lastShipShot > Ship.SHIP_SHOT_FREQUENCY * 1000) {
             ship.transform.getTranslation(tmpV1);
-            shipShot = new Shot(shotModel, tmpV1, false);
-            shots.add(shipShot);
+            shipShots.add(new Shot(shotModel, tmpV1, false));
+            shots.addAll(shipShots);
+            lastShipShot = System.currentTimeMillis();
             if (listener != null) listener.shot();
         }
     }
