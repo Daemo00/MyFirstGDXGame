@@ -67,8 +67,8 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
         simulation = new Simulation();
         simulation.listener = this;
         renderer = new Renderer();
-        explosion = Gdx.audio.newSound(Gdx.files.internal("data/explosion.wav"));
-        shot = Gdx.audio.newSound(Gdx.files.internal("data/shot.wav"));
+        explosion = Gdx.audio.newSound(Gdx.files.internal("invaders/explosion.wav"));
+        shot = Gdx.audio.newSound(Gdx.files.internal("invaders/shot.wav"));
 
         if (invaders.getController() != null) {
             invaders.getController().addListener(listener);

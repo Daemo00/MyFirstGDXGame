@@ -65,13 +65,13 @@ public class GameOver extends InvadersScreen {
     public GameOver(MainGame invaders, MainMenuScreen mainMenuScreen) {
         super(invaders, mainMenuScreen);
         spriteBatch = new SpriteBatch();
-        background = new Texture(Gdx.files.internal("data/planet.jpg"));
+        background = new Texture(Gdx.files.internal("invaders/planet.jpg"));
         background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        logo = new Texture(Gdx.files.internal("data/title.png"));
+        logo = new Texture(Gdx.files.internal("invaders/title.png"));
         logo.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        font = new BitmapFont(Gdx.files.internal("data/font16.fnt"), Gdx.files.internal("data/font16.png"), false);
+        font = new BitmapFont(Gdx.files.internal("invaders/font16.fnt"), Gdx.files.internal("invaders/font16.png"), false);
 
         if (invaders.getController() != null) {
             invaders.getController().addListener(new ControllerAdapter() {

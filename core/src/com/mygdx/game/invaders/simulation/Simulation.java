@@ -67,14 +67,14 @@ public class Simulation implements Disposable {
 
     private void populate() {
         ObjLoader objLoader = new ObjLoader();
-        shipModel = objLoader.loadModel(Gdx.files.internal("data/ship.obj"));
-        invaderModel = objLoader.loadModel(Gdx.files.internal("data/invader.obj"));
-        blockModel = objLoader.loadModel(Gdx.files.internal("data/block.obj"));
-        shotModel = objLoader.loadModel(Gdx.files.internal("data/shot.obj"));
+        shipModel = objLoader.loadModel(Gdx.files.internal("invaders/ship.obj"));
+        invaderModel = objLoader.loadModel(Gdx.files.internal("invaders/invader.obj"));
+        blockModel = objLoader.loadModel(Gdx.files.internal("invaders/block.obj"));
+        shotModel = objLoader.loadModel(Gdx.files.internal("invaders/shot.obj"));
 
-        final Texture shipTexture = new Texture(Gdx.files.internal("data/ship.png"), Format.RGB565, true);
+        final Texture shipTexture = new Texture(Gdx.files.internal("invaders/ship.png"), Format.RGB565, true);
         shipTexture.setFilter(TextureFilter.MipMap, TextureFilter.Linear);
-        final Texture invaderTexture = new Texture(Gdx.files.internal("data/invader.png"), Format.RGB565, true);
+        final Texture invaderTexture = new Texture(Gdx.files.internal("invaders/invader.png"), Format.RGB565, true);
         invaderTexture.setFilter(TextureFilter.MipMap, TextureFilter.Linear);
         shipModel.materials.get(0).set(TextureAttribute.createDiffuse(shipTexture));
         invaderModel.materials.get(0).set(TextureAttribute.createDiffuse(invaderTexture));
@@ -84,7 +84,7 @@ public class Simulation implements Disposable {
 
         shotModel.materials.get(0).set(ColorAttribute.createDiffuse(1, 1, 0, 1f));
 
-        final Texture explosionTexture = new Texture(Gdx.files.internal("data/explode.png"), Format.RGBA4444, true);
+        final Texture explosionTexture = new Texture(Gdx.files.internal("invaders/explode.png"), Format.RGBA4444, true);
         explosionTexture.setFilter(TextureFilter.MipMap, TextureFilter.Linear);
 
         final Mesh explosionMesh = new Mesh(true, 4 * 16, 6 * 16, new VertexAttribute(Usage.Position, 3, "a_position"),

@@ -15,8 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.invaders.screens.GameLoop;
 import com.mygdx.game.invaders.screens.GameOver;
+import com.mygdx.game.invaders.screens.InvadersMenu;
 import com.mygdx.game.invaders.screens.InvadersScreen;
-import com.mygdx.game.invaders.screens.MainMenu;
 
 
 public class MainGame extends Game {
@@ -102,7 +102,7 @@ public class MainGame extends Game {
 
             // if the current screen is a main menu screen we switch to
             // the game loop
-            if (currentScreen instanceof MainMenu) {
+            if (currentScreen instanceof InvadersMenu) {
                 setScreen(new GameLoop(this, mainMenuScreen));
             } else {
                 // if the current screen is a game loop screen we switch to the
@@ -112,7 +112,7 @@ public class MainGame extends Game {
                 } else if (currentScreen instanceof GameOver) {
                     // if the current screen is a game over screen we switch to the
                     // main menu screen
-                    setScreen(new MainMenu(this, mainMenuScreen));
+                    setScreen(new InvadersMenu(this, mainMenuScreen));
                 }
             }
         }

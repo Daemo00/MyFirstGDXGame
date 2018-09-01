@@ -90,10 +90,10 @@ public class Renderer {
             spriteBatch = new SpriteBatch();
             modelBatch = new ModelBatch();
 
-            backgroundTexture = new Texture(Gdx.files.internal("data/planet.jpg"), Format.RGB565, true);
+            backgroundTexture = new Texture(Gdx.files.internal("invaders/planet.jpg"), Format.RGB565, true);
             backgroundTexture.setFilter(TextureFilter.MipMap, TextureFilter.Linear);
 
-            font = new BitmapFont(Gdx.files.internal("data/font10.fnt"), Gdx.files.internal("data/font10.png"), false);
+            font = new BitmapFont(Gdx.files.internal("invaders/font10.fnt"), Gdx.files.internal("invaders/font10.png"), false);
 
             camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         } catch (Exception ex) {
