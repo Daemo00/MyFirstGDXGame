@@ -50,7 +50,6 @@ public class GenericGameScreen implements Screen {
         TextButton backGameButton = new TextButton("Back", style);
         backGameButton.setSize(col_width, row_height);
         backGameButton.setPosition(Gdx.graphics.getWidth() - col_width, Gdx.graphics.getHeight() - row_height);
-        Gdx.app.log("DBG", "Button " + backGameButton.getText() + " label height: " + backGameButton.getLabel().getHeight());
         backGameButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {

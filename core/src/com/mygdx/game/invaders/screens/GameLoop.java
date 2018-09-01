@@ -21,6 +21,7 @@ import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.invaders.Renderer;
 import com.mygdx.game.invaders.simulation.Simulation;
 import com.mygdx.game.invaders.simulation.SimulationListener;
@@ -61,8 +62,8 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
         }
     };
 
-    public GameLoop(MainGame invaders) {
-        super(invaders);
+    public GameLoop(MainGame invaders, MainMenuScreen mainMenuScreen) {
+        super(invaders, mainMenuScreen);
         simulation = new Simulation();
         simulation.listener = this;
         renderer = new Renderer();

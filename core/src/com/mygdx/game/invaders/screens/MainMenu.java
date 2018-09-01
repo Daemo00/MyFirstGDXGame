@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
 /**
  * The main menu screen showing a background, the logo of the game and a label telling the user to touch the screen to start the
@@ -62,8 +63,8 @@ public class MainMenu extends InvadersScreen {
      **/
     private boolean isDone = false;
 
-    public MainMenu(MainGame invaders) {
-        super(invaders);
+    public MainMenu(MainGame invaders, MainMenuScreen mainMenuScreen) {
+        super(invaders, mainMenuScreen);
 
         spriteBatch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("data/planet.jpg"));

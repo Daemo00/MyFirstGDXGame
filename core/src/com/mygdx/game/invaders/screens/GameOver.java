@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
 /**
  * The game over screen displays the final score and a game over text and waits for the user to touch the screen in which case it
@@ -61,8 +62,8 @@ public class GameOver extends InvadersScreen {
      **/
     private boolean isDone = false;
 
-    public GameOver(MainGame invaders) {
-        super(invaders);
+    public GameOver(MainGame invaders, MainMenuScreen mainMenuScreen) {
+        super(invaders, mainMenuScreen);
         spriteBatch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("data/planet.jpg"));
         background.setFilter(TextureFilter.Linear, TextureFilter.Linear);

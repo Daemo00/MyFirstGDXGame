@@ -24,7 +24,6 @@ public class Shot extends ModelInstance {
 
     Shot(Model model, Vector3 position, boolean isInvaderShot) {
         super(model, position);
-        // this.position.set(position);
         this.isInvaderShot = isInvaderShot;
     }
 

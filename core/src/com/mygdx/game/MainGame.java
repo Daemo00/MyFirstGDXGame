@@ -46,6 +46,7 @@ public class MainGame extends Game {
             }
         }
     };
+    private MainMenuScreen mainMenuScreen;
 
     public Controller getController() {
         return controller;
@@ -58,7 +59,8 @@ public class MainGame extends Game {
         gen.dispose();
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin.addRegions(new TextureAtlas("skin/uiskin.atlas"));
-        this.setScreen(new MainMenuScreen(this));
+        mainMenuScreen = new MainMenuScreen(this);
+        this.setScreen(mainMenuScreen);
         Array<Controller> controllers = Controllers.getControllers();
         if (controllers.size > 0) {
             controller = controllers.first();
@@ -82,7 +84,6 @@ public class MainGame extends Game {
         }
         FreeTypeFontGenerator.FreeTypeFontParameter freeTypeFontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         freeTypeFontParameter.size = (int) (dp * Gdx.graphics.getDensity() * scalingFactor);
-        Gdx.app.log("INFO", "Density: " + Gdx.graphics.getDensity());
         return ftfg.generateFont(freeTypeFontParameter);
     }
 
@@ -102,16 +103,16 @@ public class MainGame extends Game {
             // if the current screen is a main menu screen we switch to
             // the game loop
             if (currentScreen instanceof MainMenu) {
-                setScreen(new GameLoop(this));
+                setScreen(new GameLoop(this, mainMenuScreen));
             } else {
                 // if the current screen is a game loop screen we switch to the
                 // game over screen
                 if (currentScreen instanceof GameLoop) {
-                    setScreen(new GameOver(this));
+                    setScreen(new GameOver(this, mainMenuScreen));
                 } else if (currentScreen instanceof GameOver) {
                     // if the current screen is a game over screen we switch to the
                     // main menu screen
-                    setScreen(new MainMenu(this));
+                    setScreen(new MainMenu(this, mainMenuScreen));
                 }
             }
         }

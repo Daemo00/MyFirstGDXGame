@@ -43,7 +43,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new CameraScreen(game, this));
         gameScreens.add(new ParallaxScreen(game, this));
         gameScreens.add(new Multiplexing(game, this));
-        gameScreens.add(new MainMenu(game));
+        gameScreens.add(new MainMenu(game, this));
 
         for (Screen gameScreen : gameScreens) {
             stage.addActor(createGameButton(gameScreen));
@@ -73,7 +73,6 @@ public class MainMenuScreen implements Screen {
         }
         dropGameButton.setSize(col_width, row_height);
         dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
-        Gdx.app.log("DBG", "Button " + dropGameButton.getText() + " label height: " + dropGameButton.getLabel().getHeight());
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = this.game.skin.getDrawable("button");
         style.down = this.game.skin.getDrawable("button-down");

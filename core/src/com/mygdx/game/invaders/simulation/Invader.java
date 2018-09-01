@@ -60,6 +60,6 @@ public class Invader extends ModelInstance {
             }
         }
         float INVADER_ROTATION = 45f;
-        transform.rotate(0, 1, 0, INVADER_ROTATION * delta);
+        transform.rotate(1, 1, 1, INVADER_ROTATION * delta);
     }
 }

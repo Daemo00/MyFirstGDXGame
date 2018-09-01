@@ -13,19 +13,21 @@
 
 package com.mygdx.game.invaders.screens;
 
-import com.badlogic.gdx.Screen;
+import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.MainMenuScreen;
 
 /**
  * Common class for a game screen, e.g. main menu, game loop, game over screen and so on.
  *
  * @author mzechner
  */
-public abstract class InvadersScreen implements Screen {
+public abstract class InvadersScreen extends GenericGameScreen {
 
     protected MainGame invaders;
 
-    InvadersScreen(MainGame game) {
+    InvadersScreen(MainGame game, MainMenuScreen mainMenuScreen) {
+        super(game, "Invaders", mainMenuScreen);
         this.invaders = game;
     }
 
@@ -50,6 +52,7 @@ public abstract class InvadersScreen implements Screen {
     public void render(float delta) {
         update(delta);
         draw(delta);
+        postRender();
     }
 
     @Override
@@ -58,6 +61,7 @@ public abstract class InvadersScreen implements Screen {
 
     @Override
     public void show() {
+        super.show();
     }
 
     @Override
