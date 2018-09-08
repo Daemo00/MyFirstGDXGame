@@ -26,7 +26,7 @@ public class MainMenuScreen implements Screen {
     private final Stage stage;
     private final MainGame game;
     TextButton.TextButtonStyle buttonStyle;
-    private Label.LabelStyle labelStyle;
+    Label.LabelStyle labelStyle;
 
     MainMenuScreen(final MainGame game) {
         this.game = game;
@@ -49,6 +49,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new Multiplexing(game, this));
         gameScreens.add(new InvadersMenu(game, this));
         gameScreens.add(new CubocyMenu(game, this));
+        gameScreens.add(new PreferencesScreen(game, this));
 
         // Create a table that fills the screen. Everything else will go inside this table.
         Table table = new Table();
@@ -61,7 +62,6 @@ public class MainMenuScreen implements Screen {
         Button b;
         for (Screen gameScreen : gameScreens) {
             b = createGameButton(gameScreen);
-            stage.addActor(b);
             table.add(b).width(150);
             table.row().padTop(10);
         }

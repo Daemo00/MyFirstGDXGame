@@ -33,6 +33,7 @@ public class MainGame extends Game {
         }
     };
     private MainMenuScreen mainMenuScreen;
+    private final MyPreferences preferencesScreen = new MyPreferences();
 
     public Controller getController() {
         return controller;
@@ -125,5 +126,9 @@ public class MainGame extends Game {
         font.dispose();
         skin.dispose();
         screen.dispose();
+    }
+
+    public MyPreferences getPreferences() {
+        return preferencesScreen;
     }
 }
