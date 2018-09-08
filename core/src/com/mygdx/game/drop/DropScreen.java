@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class DropScreen extends GenericGameScreen {
 	private OrthographicCamera camera;
-	private Vector3 touchPos = new Vector3();
+    private final Vector3 touchPos = new Vector3();
 	private Music rainMusic;
 	private Sound raindropSound;
 

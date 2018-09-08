@@ -24,7 +24,7 @@ import com.mygdx.game.MainMenuScreen;
  */
 public abstract class InvadersScreen extends GenericGameScreen {
 
-    protected MainGame invaders;
+    final MainGame invaders;
 
     InvadersScreen(MainGame game, MainMenuScreen mainMenuScreen) {
         super(game, "Invaders", mainMenuScreen);
@@ -34,12 +34,12 @@ public abstract class InvadersScreen extends GenericGameScreen {
     /**
      * Called when the screen should update itself, e.g. continue a simulation etc.
      */
-    public abstract void update(float delta);
+    protected abstract void update(float delta);
 
     /**
      * Called when a screen should render itself
      */
-    public abstract void draw(float delta);
+    protected abstract void draw(float delta);
 
     /**
      * Called by GdxInvaders to check whether the screen is done.

@@ -17,11 +17,11 @@ import com.mygdx.game.MainMenuScreen;
 
 public class Multiplexing extends GenericGameScreen {
 
-    private Stage gameStage;
-    private Stage UIStage;
+    private final Stage gameStage;
+    private final Stage UIStage;
     private OrthographicCamera camera;
 
-    private Slider slider;
+    private final Slider slider;
 
 
     public Multiplexing(MainGame game, MainMenuScreen mainMenuScreen) {

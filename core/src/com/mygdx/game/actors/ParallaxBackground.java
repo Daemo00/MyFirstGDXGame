@@ -9,14 +9,20 @@ import com.badlogic.gdx.utils.Array;
 public class ParallaxBackground extends Actor {
 
     private int scroll;
-    private Array<Texture> layers;
+    private final Array<Texture> layers;
 
-    private float x, y, width, height, scaleX, scaleY;
-    private int originX;
-    private int originY;
-    private int rotation;
-    private int srcY;
-    private boolean flipX, flipY;
+    private final float x;
+    private final float y;
+    private final float width;
+    private final float height;
+    private final float scaleX;
+    private final float scaleY;
+    private final int originX;
+    private final int originY;
+    private final int rotation;
+    private final int srcY;
+    private final boolean flipX;
+    private final boolean flipY;
 
     private int speed;
 

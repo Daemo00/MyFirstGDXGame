@@ -13,13 +13,12 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 
 public class MapRenderer {
-    Animation<TextureRegion> zap;
-    private Map map;
-    private OrthographicCamera cam;
-    private SpriteCache cache;
-    private SpriteBatch batch = new SpriteBatch(5460);
-    private ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
-    private int[][] blocks;
+    private final Map map;
+    private final OrthographicCamera cam;
+    private final SpriteCache cache;
+    private final SpriteBatch batch = new SpriteBatch(5460);
+    private final ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
+    private final int[][] blocks;
     private TextureRegion tile;
     private Animation<TextureRegion> bobLeft;
     private Animation<TextureRegion> bobRight;
@@ -41,8 +40,7 @@ public class MapRenderer {
     private TextureRegion endDoor;
     private TextureRegion movingSpikes;
     private TextureRegion laser;
-    private float stateTime = 0;
-    private Vector3 lerpTarget = new Vector3();
+    private final Vector3 lerpTarget = new Vector3();
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -65,6 +63,7 @@ public class MapRenderer {
                     for (int x = blockX * 24; x < blockX * 24 + 24; x++) {
                         if (x > width) continue;
                         if (y > height) continue;
+                        //noinspection UnnecessaryLocalVariable
                         int posX = x;
                         int posY = height - y - 1;
                         if (map.match(map.tiles[x][y], Map.TILE)) cache.add(tile, posX, posY, 1, 1);
@@ -86,26 +85,26 @@ public class MapRenderer {
         for (TextureRegion region : mirror)
             region.flip(true, false);
         spikes = split[5];
-        bobRight = new Animation(0.1f, split[0], split[1]);
-        bobLeft = new Animation(0.1f, mirror[0], mirror[1]);
-        bobJumpRight = new Animation(0.1f, split[2], split[3]);
-        bobJumpLeft = new Animation(0.1f, mirror[2], mirror[3]);
-        bobIdleRight = new Animation(0.5f, split[0], split[4]);
-        bobIdleLeft = new Animation(0.5f, mirror[0], mirror[4]);
-        bobDead = new Animation(0.2f, split[0]);
+        bobRight = new Animation<TextureRegion>(0.1f, split[0], split[1]);
+        bobLeft = new Animation<TextureRegion>(0.1f, mirror[0], mirror[1]);
+        bobJumpRight = new Animation<TextureRegion>(0.1f, split[2], split[3]);
+        bobJumpLeft = new Animation<TextureRegion>(0.1f, mirror[2], mirror[3]);
+        bobIdleRight = new Animation<TextureRegion>(0.5f, split[0], split[4]);
+        bobIdleLeft = new Animation<TextureRegion>(0.5f, mirror[0], mirror[4]);
+        bobDead = new Animation<TextureRegion>(0.2f, split[0]);
         split = new TextureRegion(bobTexture).split(20, 20)[1];
         cube = split[0];
-        cubeFixed = new Animation(1, split[1], split[2], split[3], split[4], split[5]);
+        cubeFixed = new Animation<TextureRegion>(1, split[1], split[2], split[3], split[4], split[5]);
         split = new TextureRegion(bobTexture).split(20, 20)[2];
         cubeControlled = split[0];
-        spawn = new Animation(0.1f, split[4], split[3], split[2], split[1]);
-        dying = new Animation(0.1f, split[1], split[2], split[3], split[4]);
+        spawn = new Animation<TextureRegion>(0.1f, split[4], split[3], split[2], split[1]);
+        dying = new Animation<TextureRegion>(0.1f, split[1], split[2], split[3], split[4]);
         dispenser = split[5];
         split = new TextureRegion(bobTexture).split(20, 20)[3];
-        rocket = new Animation(0.1f, split[0], split[1], split[2], split[3]);
+        rocket = new Animation<TextureRegion>(0.1f, split[0], split[1], split[2], split[3]);
         rocketPad = split[4];
         split = new TextureRegion(bobTexture).split(20, 20)[4];
-        rocketExplosion = new Animation(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
+        rocketExplosion = new Animation<TextureRegion>(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
         split = new TextureRegion(bobTexture).split(20, 20)[5];
         endDoor = split[2];
         movingSpikes = split[0];
@@ -124,15 +123,12 @@ public class MapRenderer {
         cache.setProjectionMatrix(cam.combined);
         Gdx.gl.glDisable(GL20.GL_BLEND);
         cache.begin();
-        int b = 0;
         for (int blockY = 0; blockY < 4; blockY++) {
             for (int blockX = 0; blockX < 6; blockX++) {
                 cache.draw(blocks[blockX][blockY]);
-                b++;
             }
         }
         cache.end();
-        stateTime += deltaTime;
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
         renderDispensers();
@@ -150,31 +146,36 @@ public class MapRenderer {
     private void renderBob() {
         Animation<TextureRegion> anim = null;
         boolean loop = true;
-        if (map.bob.state == Bob.RUN) {
-            if (map.bob.dir == Bob.LEFT)
-                anim = bobLeft;
-            else
-                anim = bobRight;
-        }
-        if (map.bob.state == Bob.IDLE) {
-            if (map.bob.dir == Bob.LEFT)
-                anim = bobIdleLeft;
-            else
-                anim = bobIdleRight;
-        }
-        if (map.bob.state == Bob.JUMP) {
-            if (map.bob.dir == Bob.LEFT)
-                anim = bobJumpLeft;
-            else
-                anim = bobJumpRight;
-        }
-        if (map.bob.state == Bob.SPAWN) {
-            anim = spawn;
-            loop = false;
-        }
-        if (map.bob.state == Bob.DYING) {
-            anim = dying;
-            loop = false;
+        switch (map.bob.state) {
+            case SPAWN:
+                anim = spawn;
+                loop = false;
+                break;
+            case IDLE:
+                if (map.bob.dir == Bob.LEFT)
+                    anim = bobIdleLeft;
+                else
+                    anim = bobIdleRight;
+                break;
+            case RUN:
+                if (map.bob.dir == Bob.LEFT)
+                    anim = bobLeft;
+                else
+                    anim = bobRight;
+                break;
+            case JUMP:
+                if (map.bob.dir == Bob.LEFT)
+                    anim = bobJumpLeft;
+                else
+                    anim = bobJumpRight;
+                break;
+            case DYING:
+                anim = dying;
+                loop = false;
+                break;
+            case DEAD:
+                anim = bobDead;
+                break;
         }
         batch.draw(anim.getKeyFrame(map.bob.stateTime, loop), map.bob.pos.x, map.bob.pos.y, 1, 1);
     }

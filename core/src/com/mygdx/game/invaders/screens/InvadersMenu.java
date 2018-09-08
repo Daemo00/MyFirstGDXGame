@@ -39,7 +39,7 @@ public class InvadersMenu extends InvadersScreen {
     /**
      * the SpriteBatch used to draw the background, logo and text
      **/
-    private final SpriteBatch spriteBatch;
+    private SpriteBatch spriteBatch;
     /**
      * the background texture
      **/
@@ -66,7 +66,6 @@ public class InvadersMenu extends InvadersScreen {
     public InvadersMenu(MainGame invaders, MainMenuScreen mainMenuScreen) {
         super(invaders, mainMenuScreen);
 
-        spriteBatch = new SpriteBatch();
         background = new Texture(Gdx.files.internal("invaders/planet.jpg"));
         background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
@@ -85,6 +84,12 @@ public class InvadersMenu extends InvadersScreen {
                 }
             });
         }
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -123,8 +128,13 @@ public class InvadersMenu extends InvadersScreen {
     }
 
     @Override
-    public void dispose() {
+    public void hide() {
+        super.hide();
         spriteBatch.dispose();
+    }
+
+    @Override
+    public void dispose() {
         background.dispose();
         logo.dispose();
         font.dispose();

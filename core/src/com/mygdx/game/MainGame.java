@@ -31,7 +31,7 @@ public class MainGame extends Game {
     private FPSLogger fps;
 
     private Controller controller;
-    private ControllerAdapter controllerListener = new ControllerAdapter() {
+    private final ControllerAdapter controllerListener = new ControllerAdapter() {
         @Override
         public void connected(Controller c) {
             if (controller == null) {
@@ -55,7 +55,7 @@ public class MainGame extends Game {
     public void create() {
         batch = new SpriteBatch();
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("skin/arial.ttf"));
-        font = createFont(gen, 16); //16dp == 12pt
+        font = createFont(gen); //16dp == 12pt
         gen.dispose();
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         skin.addRegions(new TextureAtlas("skin/uiskin.atlas"));
@@ -68,7 +68,7 @@ public class MainGame extends Game {
         Controllers.addListener(controllerListener);
     }
 
-    private BitmapFont createFont(FreeTypeFontGenerator ftfg, int dp) {
+    private BitmapFont createFont(FreeTypeFontGenerator ftfg) {
         // Fixing screen size thanks to https://gamedev.stackexchange.com/a/77674/119718
         int scalingFactor = 1;
         switch (Gdx.app.getType()) {
@@ -83,7 +83,7 @@ public class MainGame extends Game {
                 break;
         }
         FreeTypeFontGenerator.FreeTypeFontParameter freeTypeFontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        freeTypeFontParameter.size = (int) (dp * Gdx.graphics.getDensity() * scalingFactor);
+        freeTypeFontParameter.size = (int) (16 * Gdx.graphics.getDensity() * scalingFactor);
         return ftfg.generateFont(freeTypeFontParameter);
     }
 

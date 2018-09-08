@@ -7,12 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bob {
-    static final int IDLE = 0;
-    static final int RUN = 1;
-    static final int JUMP = 2;
-    static final int SPAWN = 3;
-    static final int DYING = 4;
-    static final int DEAD = 5;
+    public final Rectangle bounds = new Rectangle();
     static final int LEFT = -1;
     static final int RIGHT = 1;
     private static final float ACCELERATION = 20f;
@@ -20,17 +15,14 @@ public class Bob {
     private static final float GRAVITY = 20.0f;
     private static final float MAX_VEL = 6f;
     private static final float DAMP = 0.90f;
-    public Rectangle bounds = new Rectangle();
-    Vector2 pos = new Vector2();
-    int state = SPAWN;
-    float stateTime = 0;
+    final Vector2 pos = new Vector2();
+    private final Vector2 acceleration = new Vector2();
+    private final Vector2 vel = new Vector2();
+    private final Map map;
     int dir = LEFT;
-    private Vector2 accel = new Vector2();
-    private Vector2 vel = new Vector2();
-    private Map map;
-    private boolean grounded = false;
-    private Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
-
+    private final Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
+    BobState state;
+    float stateTime;
     Bob(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
@@ -39,40 +31,37 @@ public class Bob {
         bounds.height = 0.8f;
         bounds.x = pos.x + 0.2f;
         bounds.y = pos.y;
-        state = SPAWN;
+        state = BobState.SPAWN;
         stateTime = 0;
     }
 
     public void update(float deltaTime) {
         processKeys();
 
-        accel.y = -GRAVITY;
-        accel.scl(deltaTime);
-        vel.add(accel.x, accel.y);
-        if (accel.x == 0) vel.x *= DAMP;
+        acceleration.y = -GRAVITY;
+        acceleration.scl(deltaTime);
+        vel.add(acceleration.x, acceleration.y);
+        if (acceleration.x == 0) vel.x *= DAMP;
         if (vel.x > MAX_VEL) vel.x = MAX_VEL;
         if (vel.x < -MAX_VEL) vel.x = -MAX_VEL;
         vel.scl(deltaTime);
         tryMove();
         vel.scl(1.0f / deltaTime);
 
-        if (state == SPAWN) {
-            if (stateTime > 0.4f) {
-                state = IDLE;
-            }
+        switch (state) {
+            case SPAWN:
+                if (stateTime > 0.4f) state = BobState.IDLE;
+                break;
+            case DYING:
+                if (stateTime > 0.4f) state = BobState.DEAD;
+                break;
         }
-
-        if (state == DYING) {
-            if (stateTime > 0.4f) {
-                state = DEAD;
-            }
-        }
-
         stateTime += deltaTime;
     }
 
     private void processKeys() {
-        if (map.cube.state == Cube.CONTROLLED || state == SPAWN || state == DYING) return;
+        if (map.cube.state == Cube.CONTROLLED || state == BobState.SPAWN || state == BobState.DYING)
+            return;
 
         float x0 = (Gdx.input.getX(0) / (float) Gdx.graphics.getWidth()) * 480;
         float x1 = (Gdx.input.getX(1) / (float) Gdx.graphics.getWidth()) * 480;
@@ -83,23 +72,22 @@ public class Bob {
         boolean jumpButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 < 64)
                 || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
 
-        if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != JUMP) {
-            state = JUMP;
+        if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != BobState.JUMP) {
+            state = BobState.JUMP;
             vel.y = JUMP_VELOCITY;
-            grounded = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.A) || leftButton) {
-            if (state != JUMP) state = RUN;
+            if (state != BobState.JUMP) state = BobState.RUN;
             dir = LEFT;
-            accel.x = ACCELERATION * dir;
+            acceleration.x = ACCELERATION * dir;
         } else if (Gdx.input.isKeyPressed(Keys.D) || rightButton) {
-            if (state != JUMP) state = RUN;
+            if (state != BobState.JUMP) state = BobState.RUN;
             dir = RIGHT;
-            accel.x = ACCELERATION * dir;
+            acceleration.x = ACCELERATION * dir;
         } else {
-            if (state != JUMP) state = IDLE;
-            accel.x = 0;
+            if (state != BobState.JUMP) state = BobState.IDLE;
+            acceleration.x = 0;
         }
     }
 
@@ -122,9 +110,8 @@ public class Bob {
             if (bounds.overlaps(rect)) {
                 if (vel.y < 0) {
                     bounds.y = rect.y + rect.height + 0.01f;
-                    grounded = true;
-                    if (state != DYING && state != SPAWN)
-                        state = Math.abs(accel.x) > 0.1f ? RUN : IDLE;
+                    if (state != BobState.DYING && state != BobState.SPAWN)
+                        state = Math.abs(acceleration.x) > 0.1f ? BobState.RUN : BobState.IDLE;
                 } else
                     bounds.y = rect.y - bounds.height - 0.01f;
                 vel.y = 0;
@@ -151,8 +138,8 @@ public class Bob {
         int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y];
         int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];
 
-        if (state != DYING && (map.isDeadly(tile1) || map.isDeadly(tile2) || map.isDeadly(tile3) || map.isDeadly(tile4))) {
-            state = DYING;
+        if (state != BobState.DYING && (map.isDeadly(tile1) || map.isDeadly(tile2) || map.isDeadly(tile3) || map.isDeadly(tile4))) {
+            state = BobState.DYING;
             stateTime = 0;
         }
 
@@ -180,5 +167,14 @@ public class Bob {
             r[4].height = map.cube.bounds.height;
         } else
             r[4].set(-1, -1, 0, 0);
+    }
+
+    enum BobState {
+        SPAWN,
+        IDLE,
+        RUN,
+        JUMP,
+        DYING,
+        DEAD
     }
 }

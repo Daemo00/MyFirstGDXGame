@@ -16,10 +16,10 @@ package com.mygdx.game.invaders.simulation;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
-public class Block extends ModelInstance {
+class Block extends ModelInstance {
     public final static float BLOCK_RADIUS = 0.5f;
 
-    Block(Model model, float x, float y, float z) {
-        super(model, x, y, z);
+    Block(Model model, float x, float z) {
+        super(model, x, (float) 0, z);
     }
 }

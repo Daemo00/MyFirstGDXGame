@@ -11,9 +11,9 @@ import com.mygdx.game.MainMenuScreen;
 public class CameraScreen extends GenericGameScreen {
     private final int startX = 1100;// -Gdx.graphics.getWidth()/2;
     private final int startY = 1225;
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
     private float percent;
-    private long startTime;
+    private final long startTime;
 
     public CameraScreen(MainGame game, MainMenuScreen mainMenuScreen) {
         super(game, "Camera", mainMenuScreen);

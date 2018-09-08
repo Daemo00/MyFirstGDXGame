@@ -6,23 +6,17 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
 
 public class Map {
-    static int EMPTY = 0;
-    static int TILE = 0xffffff;
-    static int SPIKES = 0x00ff00;
-    private static int START = 0xff0000;
-    private static int END = 0xff00ff;
-    private static int DISPENSER = 0xff0100;
-    private static int ROCKET = 0x0000ff;
-    private static int MOVING_SPIKES = 0xffff00;
-    private static int LASER = 0x00ffff;
+    static final int EMPTY = 0;
+    static final int TILE = 0xffffff;
+    static final int SPIKES = 0x00ff00;
     public Bob bob;
     public EndDoor endDoor;
     int[][] tiles;
     Cube cube;
-    Array<Dispenser> dispensers = new Array<Dispenser>();
-    Array<Rocket> rockets = new Array<Rocket>();
-    Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
-    Array<Laser> lasers = new Array<Laser>();
+    final Array<Dispenser> dispensers = new Array<Dispenser>();
+    final Array<Rocket> rockets = new Array<Rocket>();
+    final Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
+    final Array<Laser> lasers = new Array<Laser>();
     private Dispenser activeDispenser = null;
 
     public Map() {
@@ -35,14 +29,18 @@ public class Map {
         for (int y = 0; y < 35; y++) {
             for (int x = 0; x < 150; x++) {
                 int pix = (pixmap.getPixel(x, y) >>> 8) & 0xffffff;
+                int LASER = 0x00ffff;
+                int MOVING_SPIKES = 0xffff00;
+                int ROCKET = 0x0000ff;
+                int DISPENSER = 0xff0100;
+                int END = 0xff00ff;
+                int START = 0xff0000;
                 if (match(pix, START)) {
                     Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
                     dispensers.add(dispenser);
                     activeDispenser = dispenser;
                     bob = new Bob(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
-                    bob.state = Bob.SPAWN;
                     cube = new Cube(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
-                    cube.state = Cube.DEAD;
                 } else if (match(pix, DISPENSER)) {
                     Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
                     dispensers.add(dispenser);
@@ -75,10 +73,11 @@ public class Map {
 
     public void update(float deltaTime) {
         bob.update(deltaTime);
-        if (bob.state == Bob.DEAD)
+        if (bob.state == Bob.BobState.DEAD)
             bob = new Bob(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
         cube.update(deltaTime);
-        if (cube.state == Cube.DEAD) cube = new Cube(this, bob.bounds.x, bob.bounds.y);
+        if (cube.state == Cube.DEAD)
+            cube = new Cube(this, bob.bounds.x, bob.bounds.y);
         for (int i = 0; i < dispensers.size; i++) {
             if (bob.bounds.overlaps(dispensers.get(i).bounds)) {
                 activeDispenser = dispensers.get(i);

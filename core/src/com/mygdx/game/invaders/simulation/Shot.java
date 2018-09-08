@@ -17,9 +17,9 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 
-public class Shot extends ModelInstance {
+class Shot extends ModelInstance {
     private final static Vector3 tmpV = new Vector3();
-    public boolean isInvaderShot;
+    public final boolean isInvaderShot;
     public boolean hasLeftField = false;
 
     Shot(Model model, Vector3 position, boolean isInvaderShot) {

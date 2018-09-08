@@ -48,7 +48,7 @@ public class GameLoop extends InvadersScreen implements SimulationListener {
      * controller
      **/
     private int buttonsPressed = 0;
-    private ControllerListener listener = new ControllerAdapter() {
+    private final ControllerListener listener = new ControllerAdapter() {
         @Override
         public boolean buttonDown(Controller controller, int buttonIndex) {
             buttonsPressed++;

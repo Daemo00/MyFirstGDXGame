@@ -42,23 +42,23 @@ public class Simulation implements Disposable {
     private final static float PLAYFIELD_MIN_X = -14;
     private final Vector3 tmpV1 = new Vector3();
     private final Vector3 tmpV2 = new Vector3();
-    public ArrayList<Invader> invaders = new ArrayList<Invader>();
-    public ArrayList<Block> blocks = new ArrayList<Block>();
-    public ArrayList<Shot> shots = new ArrayList<Shot>();
-    public ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+    public final ArrayList<Invader> invaders = new ArrayList<Invader>();
+    public final ArrayList<Block> blocks = new ArrayList<Block>();
+    public final ArrayList<Shot> shots = new ArrayList<Shot>();
+    public final ArrayList<Explosion> explosions = new ArrayList<Explosion>();
     public Ship ship;
     public transient SimulationListener listener;
     public int score;
     public int wave = 1;
-    private ArrayList<Shot> shipShots = new ArrayList<Shot>();
+    private final ArrayList<Shot> shipShots = new ArrayList<Shot>();
     private float multiplier = 1;
     private Model shipModel;
     private Model invaderModel;
     private Model blockModel;
     private Model shotModel;
     private Model explosionModel;
-    private ArrayList<Shot> removedShots = new ArrayList<Shot>();
-    private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
+    private final ArrayList<Shot> removedShots = new ArrayList<Shot>();
+    private final ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>();
     private long lastShipShot;
 
     public Simulation() {
@@ -163,18 +163,18 @@ public class Simulation implements Disposable {
 
         for (int row = 0; row < 4; row++) {
             for (int column = 0; column < 8; column++) {
-                Invader invader = new Invader(invaderModel, -PLAYFIELD_MAX_X / 2 + column * 2f, 0, PLAYFIELD_MIN_Z + row * 2f);
+                Invader invader = new Invader(invaderModel, -PLAYFIELD_MAX_X / 2 + column * 2f, PLAYFIELD_MIN_Z + row * 2f);
                 invaders.add(invader);
             }
         }
 
         for (int shield = 0; shield < 3; shield++) {
-            blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -2));
-            blocks.add(new Block(blockModel, -10 + shield * 10 - 1, 0, -3));
+            blocks.add(new Block(blockModel, -10 + shield * 10 - 1, -2));
+            blocks.add(new Block(blockModel, -10 + shield * 10 - 1, -3));
             //noinspection PointlessArithmeticExpression
-            blocks.add(new Block(blockModel, -10 + shield * 10 + 0, 0, -3));
-            blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -3));
-            blocks.add(new Block(blockModel, -10 + shield * 10 + 1, 0, -2));
+            blocks.add(new Block(blockModel, -10 + shield * 10 + 0, -3));
+            blocks.add(new Block(blockModel, -10 + shield * 10 + 1, -3));
+            blocks.add(new Block(blockModel, -10 + shield * 10 + 1, -2));
         }
     }
 

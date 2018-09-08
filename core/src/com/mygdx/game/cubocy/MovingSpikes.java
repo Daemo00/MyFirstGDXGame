@@ -4,17 +4,17 @@ package com.mygdx.game.cubocy;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class MovingSpikes {
+class MovingSpikes {
     private static final int FORWARD = 1;
     private static final int BACKWARD = -1;
     private static final float FORWARD_VEL = 10;
     private static final float BACKWARD_VEL = 4;
-    Vector2 pos = new Vector2();
+    final Vector2 pos = new Vector2();
     float angle = 0;
     private int state = FORWARD;
-    private Map map;
-    private Rectangle bounds = new Rectangle();
-    private Vector2 vel = new Vector2();
+    private final Map map;
+    private final Rectangle bounds = new Rectangle();
+    private final Vector2 vel = new Vector2();
     private int fx = 0;
     private int fy = 0;
     private int bx = 0;
@@ -62,7 +62,7 @@ public class MovingSpikes {
 
     public void update(float deltaTime) {
         pos.add(vel.x * deltaTime, vel.y * deltaTime);
-        boolean change = false;
+        boolean change;
         if (state == FORWARD) {
             change = map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy] == Map.TILE;
         } else {
@@ -81,8 +81,8 @@ public class MovingSpikes {
         bounds.y = pos.y;
 
         if (map.bob.bounds.overlaps(bounds)) {
-            if (map.bob.state != Bob.DYING) {
-                map.bob.state = Bob.DYING;
+            if (map.bob.state != Bob.BobState.DYING) {
+                map.bob.state = Bob.BobState.DYING;
                 map.bob.stateTime = 0;
             }
         }

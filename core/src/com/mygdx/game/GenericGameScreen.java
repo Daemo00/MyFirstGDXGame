@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,25 +17,23 @@ import static com.mygdx.game.MainMenuScreen.row_height;
 
 public class GenericGameScreen implements Screen {
 
-    protected MainGame game;
-    protected Stage stage;
-    protected String title;
-    private Stage HUDStage;
-    protected MainMenuScreen mainMenuScreen;
-    protected InputMultiplexer multiplexer;
+    protected final MainGame game;
+    protected final Stage stage;
+    protected final MainMenuScreen mainMenuScreen;
+    protected final InputMultiplexer multiplexer;
+    final String title;
 
 
-    public GenericGameScreen(MainGame game, String title, MainMenuScreen mainMenuScreen) {
+    protected GenericGameScreen(MainGame game, String title, MainMenuScreen mainMenuScreen) {
         this.game = game;
         this.title = title;
         this.mainMenuScreen = mainMenuScreen;
 
-        stage = new Stage(new ScreenViewport());
-        HUDStage = new Stage(new ScreenViewport());
-        HUDStage.addActor(createBackButton());
+        stage = new MyStage(new ScreenViewport());
+        stage.addActor(createBackButton());
+        Gdx.input.setCatchBackKey(true);
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
-        multiplexer.addProcessor(HUDStage);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class GenericGameScreen implements Screen {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(mainMenuScreen);
+                backAction();
                 return true;
             }
         });
@@ -66,8 +65,14 @@ public class GenericGameScreen implements Screen {
         return backGameButton;
     }
 
+    private void backAction() {
+        game.setScreen(mainMenuScreen);
+    }
+
     protected void preRender() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK))
+            backAction();
     }
 
     @Override
@@ -76,7 +81,7 @@ public class GenericGameScreen implements Screen {
     }
 
     protected void postRender() {
-        HUDStage.draw();
+        stage.draw();
     }
 
     @Override
@@ -101,7 +106,6 @@ public class GenericGameScreen implements Screen {
 
     @Override
     public void dispose() {
-        HUDStage.dispose();
         stage.dispose();
     }
 }

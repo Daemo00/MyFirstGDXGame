@@ -4,19 +4,19 @@ package com.mygdx.game.cubocy;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Rocket {
+class Rocket {
     static final int FLYING = 0;
     static final int DEAD = 2;
     private static final int EXPLODING = 1;
     private static final float VELOCITY = 6;
     float stateTime = 0;
     int state = FLYING;
-    Vector2 startPos = new Vector2();
-    Vector2 pos = new Vector2();
-    Vector2 vel = new Vector2();
-    private Map map;
-    private Rectangle bounds = new Rectangle();
-    private Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
+    final Vector2 startPos = new Vector2();
+    final Vector2 pos = new Vector2();
+    final Vector2 vel = new Vector2();
+    private final Map map;
+    private final Rectangle bounds = new Rectangle();
+    private final Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
 
     Rocket(Map map, float x, float y) {
         this.map = map;
@@ -66,8 +66,8 @@ public class Rocket {
         }
 
         if (bounds.overlaps(map.bob.bounds)) {
-            if (map.bob.state != Bob.DYING) {
-                map.bob.state = Bob.DYING;
+            if (map.bob.state != Bob.BobState.DYING) {
+                map.bob.state = Bob.BobState.DYING;
                 map.bob.stateTime = 0;
             }
             return true;

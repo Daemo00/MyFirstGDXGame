@@ -27,7 +27,7 @@ public class MainMenuScreen implements Screen {
     private static int currX;
     public static int col_width;
     public static int row_height;
-    private MainGame game;
+    private final MainGame game;
 
     MainMenuScreen(final MainGame game) {
         this.game = game;

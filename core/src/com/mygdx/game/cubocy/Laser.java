@@ -4,18 +4,18 @@ package com.mygdx.game.cubocy;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Laser {
+class Laser {
     static final int BACKWARD = -1;
     static final float FORWARD_VEL = 10;
     static final float BACKWARD_VEL = 4;
     private static final int FORWARD = 1;
     int state = FORWARD;
-    Vector2 pos = new Vector2();
-    Vector2 cappedEndPoint = new Vector2();
+    final Vector2 pos = new Vector2();
+    final Vector2 cappedEndPoint = new Vector2();
     float angle = 0;
-    Vector2 startPoint = new Vector2();
-    private Map map;
-    private Vector2 endPoint = new Vector2();
+    final Vector2 startPoint = new Vector2();
+    private final Map map;
+    private final Vector2 endPoint = new Vector2();
 
     Laser(Map map, float x, float y) {
         this.map = map;
@@ -141,8 +141,8 @@ public class Laser {
             }
         }
 
-        if (kill && map.bob.state != Bob.DYING) {
-            map.bob.state = Bob.DYING;
+        if (kill && map.bob.state != Bob.BobState.DYING) {
+            map.bob.state = Bob.BobState.DYING;
             map.bob.stateTime = 0;
         }
     }

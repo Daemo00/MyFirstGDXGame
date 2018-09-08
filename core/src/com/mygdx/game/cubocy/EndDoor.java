@@ -4,7 +4,7 @@ package com.mygdx.game.cubocy;
 import com.badlogic.gdx.math.Rectangle;
 
 public class EndDoor {
-    public Rectangle bounds = new Rectangle();
+    public final Rectangle bounds = new Rectangle();
 
     EndDoor(float x, float y) {
         this.bounds.x = x;

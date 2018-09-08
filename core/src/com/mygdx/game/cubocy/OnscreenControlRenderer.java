@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class OnscreenControlRenderer {
-    private Map map;
+    private final Map map;
     private SpriteBatch batch;
     private TextureRegion dpad;
     private TextureRegion left;

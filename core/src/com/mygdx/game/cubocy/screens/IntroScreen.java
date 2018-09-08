@@ -44,7 +44,6 @@ public class IntroScreen extends CubocScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("Cubocy", "dispose intro");
         batch.dispose();
         intro.getTexture().dispose();
     }

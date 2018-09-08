@@ -6,7 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Cube {
+class Cube {
     static final int FOLLOW = 0;
     static final int FIXED = 1;
     static final int CONTROLLED = 2;
@@ -14,18 +14,18 @@ public class Cube {
     private static final float ACCELERATION = 20;
     private static final float MAX_VELOCITY = 4;
     private static final float DAMP = 0.80f;
-    Vector2 pos = new Vector2();
-    Rectangle bounds = new Rectangle();
-    int state = FOLLOW;
+    final Vector2 pos = new Vector2();
+    final Rectangle bounds = new Rectangle();
+    int state;
     float stateTime = 0;
-    private Map map;
-    private Vector2 accel = new Vector2();
-    private Vector2 vel = new Vector2();
-    private Rectangle controllButtonRect = new Rectangle(480 - 64, 320 - 64, 64, 64);
-    private Rectangle followButtonRect = new Rectangle(480 - 64, 320 - 138, 64, 64);
-    private Rectangle dpadRect = new Rectangle(0, 0, 128, 128);
-    private Vector2 target = new Vector2();
-    private Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
+    private final Map map;
+    private final Vector2 accel = new Vector2();
+    private final Vector2 vel = new Vector2();
+    private final Rectangle controllButtonRect = new Rectangle(480 - 64, 320 - 64, 64, 64);
+    private final Rectangle followButtonRect = new Rectangle(480 - 64, 320 - 138, 64, 64);
+    private final Rectangle dpadRect = new Rectangle(0, 0, 128, 128);
+    private final Vector2 target = new Vector2();
+    private final Rectangle[] r = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
 
     Cube(Map map, float x, float y) {
         this.map = map;
@@ -34,6 +34,7 @@ public class Cube {
         this.bounds.x = pos.x + 0.2f;
         this.bounds.y = pos.y + 0.2f;
         this.bounds.width = this.bounds.height = 1.0f;
+        this.state = Cube.FOLLOW;
     }
 
     public void update(float deltaTime) {

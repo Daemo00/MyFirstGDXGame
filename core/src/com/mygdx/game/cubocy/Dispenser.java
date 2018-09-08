@@ -3,8 +3,8 @@ package com.mygdx.game.cubocy;
 
 import com.badlogic.gdx.math.Rectangle;
 
-public class Dispenser {
-    Rectangle bounds = new Rectangle();
+class Dispenser {
+    final Rectangle bounds = new Rectangle();
     boolean active = false;
 
     Dispenser(float x, float y) {

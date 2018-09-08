@@ -6,7 +6,7 @@ import com.mygdx.game.MainGame;
 import com.mygdx.game.MainMenuScreen;
 
 public abstract class CubocScreen extends GenericGameScreen {
-    MainGame game;
+    final MainGame game;
 
     CubocScreen(MainGame game, MainMenuScreen mainMenuScreen) {
         super(game, "Cubocy", mainMenuScreen);

@@ -16,18 +16,18 @@ package com.mygdx.game.invaders.simulation;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
-public class Invader extends ModelInstance {
+class Invader extends ModelInstance {
     private final static int STATE_MOVE_LEFT = 0;
     private final static int STATE_MOVE_DOWN = 1;
     private final static int STATE_MOVE_RIGHT = 2;
-    public static float INVADER_RADIUS = 0.75f;
-    public static int INVADER_POINTS = 40;
+    public static final float INVADER_RADIUS = 0.75f;
+    public static final int INVADER_POINTS = 40;
     private int state = STATE_MOVE_LEFT;
     private boolean wasLastStateLeft = true;
     private float movedDistance = Simulation.PLAYFIELD_MAX_X / 2;
 
-    Invader(Model model, float x, float y, float z) {
-        super(model, x, y, z);
+    Invader(Model model, float x, float z) {
+        super(model, x, (float) 0, z);
     }
 
     public void update(float delta, float speedMultiplier) {
