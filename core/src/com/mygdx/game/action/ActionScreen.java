@@ -17,10 +17,6 @@ import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
 import com.mygdx.game.MainMenuScreen;
 
-import static com.mygdx.game.MainMenuScreen.col_width;
-import static com.mygdx.game.MainMenuScreen.row_height;
-
-
 public class ActionScreen extends GenericGameScreen {
     private final Group lapsLabelContainer;
     private final Label lapsLabel;
@@ -40,7 +36,7 @@ public class ActionScreen extends GenericGameScreen {
         Image image1 = new Image(texture);
         image1.setPosition(X_left, Y_top);
         image1.setOrigin(image1.getWidth() / 2, image1.getHeight() / 2);
-        stage.addActor(image1);
+        gameStage.addActor(image1);
 
         ParallelAction topLeftRightParallelAction = new ParallelAction();
         topLeftRightParallelAction.addAction(Actions.moveTo(X_right, Y_top, 1, Interpolation.exp5Out));
@@ -79,19 +75,13 @@ public class ActionScreen extends GenericGameScreen {
         loopNbrAction.setAction(overallSequence);
 
         lapsLabel = new Label(" Loop :", game.skin);
-        lapsLabel.setPosition(
-                (Gdx.graphics.getWidth() - col_width) / 2,
-                (Gdx.graphics.getHeight() - row_height) / 2);
-        lapsLabel.setSize(col_width, row_height);
         lapsLabel.setAlignment(Align.center);
 
         lapsLabelContainer = new Group();
         lapsLabelContainer.addActor(lapsLabel);
-        lapsLabelContainer.setOrigin(
-                lapsLabel.getX() + col_width / 2,
-                lapsLabel.getY() + row_height / 2);
+        lapsLabelContainer.setPosition(X_left + (X_right - X_left) / 2, Y_top + (Y_bottom - Y_top) / 2);
 
-        stage.addActor(lapsLabelContainer);
+        gameStage.addActor(lapsLabelContainer);
 
         RunnableAction completedAction = new RunnableAction();
         completedAction.setRunnable(new Runnable() {
@@ -127,7 +117,7 @@ public class ActionScreen extends GenericGameScreen {
 
         ParallelAction parallelAction = new ParallelAction();
 
-        lapsLabel.setText(" Finished!");
+        lapsLabel.setText("Finished!");
         parallelAction.addAction(Actions.rotateBy(360, 3));
         parallelAction.addAction(Actions.scaleBy(5, 5, 4, Interpolation.bounceOut));
         parallelAction.addAction(FadingSequenceAction);
@@ -137,14 +127,6 @@ public class ActionScreen extends GenericGameScreen {
     @Override
     public void show() {
         super.show();
-    }
-
-    @Override
-    public void render(float delta) {
-        preRender();
-        stage.act();
-        stage.draw();
-        postRender();
     }
 
     @Override

@@ -28,7 +28,7 @@ public class GameScreen extends CubocScreen {
 
     @Override
     public void render(float delta) {
-        preRender();
+        super.render(delta);
         delta = Math.min(0.06f, Gdx.graphics.getDeltaTime());
         map.update(delta);
         renderer.render(delta);
@@ -41,7 +41,6 @@ public class GameScreen extends CubocScreen {
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
             game.setScreen(new CubocyMenu(game, mainMenuScreen));
         }
-        postRender();
     }
 
     @Override

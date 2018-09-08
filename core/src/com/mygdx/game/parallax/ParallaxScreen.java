@@ -23,20 +23,12 @@ public class ParallaxScreen extends GenericGameScreen {
         ParallaxBackground parallaxBackground = new ParallaxBackground(textures);
         parallaxBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         parallaxBackground.setSpeed(1);
-        stage.addActor(parallaxBackground);
+        gameStage.addActor(parallaxBackground);
     }
 
     @Override
     public void show() {
         super.show();
-    }
-
-    @Override
-    public void render(float delta) {
-        preRender();
-        stage.act();
-        stage.draw();
-        postRender();
     }
 
     @Override

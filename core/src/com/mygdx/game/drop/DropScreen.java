@@ -116,16 +116,15 @@ public class DropScreen extends GenericGameScreen {
 
     @Override
 	public void render(float delta) {
-        preRender();
-
+        super.render(delta);
 		camera.update();
-        stage.getBatch().setProjectionMatrix(camera.combined);
+        gameStage.getBatch().setProjectionMatrix(camera.combined);
 
-        stage.getBatch().begin();
+        gameStage.getBatch().begin();
         renderScore();
         renderRaindrops();
         renderBucket();
-        stage.getBatch().end();
+        gameStage.getBatch().end();
 
         if(TimeUtils.nanoTime() - lastRaindropTime > 500000000)
             spawnRaindrop();
@@ -135,7 +134,6 @@ public class DropScreen extends GenericGameScreen {
         for (int i = 0; i < raindropRectangles.size; i++) {
             manageRaindrops(i);
 		}
-        postRender();
 	}
 
     private void manageBucket() {
@@ -172,20 +170,19 @@ public class DropScreen extends GenericGameScreen {
         for (int i = 0; i < raindropRectangles.size; i++) {
             Rectangle raindrop = raindropRectangles.get(i);
             Integer raindropIndex = raindropIndexes.get(i);
-            stage.getBatch().draw(raindropImages.get(raindropIndex), raindrop.x, raindrop.y);
+            gameStage.getBatch().draw(raindropImages.get(raindropIndex), raindrop.x, raindrop.y);
         }
     }
 
     private void renderBucket() {
-        stage.getBatch().draw(bucketImage, bucket.x, bucket.y);
+        gameStage.getBatch().draw(bucketImage, bucket.x, bucket.y);
     }
 
     private void renderScore() {
         float span = camera.viewportWidth / raindropNames.size();
         float nameX = 0;
         for (String name : raindropNames) {
-            game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480, span, Align.center, true);
-            // game.font.draw(stage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480);
+            game.font.draw(gameStage.getBatch(), name + ": " + dropsGathered.get(name), nameX, 480, span, Align.center, true);
             nameX += span;
         }
     }

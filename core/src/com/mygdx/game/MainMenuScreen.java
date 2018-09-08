@@ -4,13 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.action.ActionScreen;
 import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.cubocy.screens.CubocyMenu;
@@ -24,19 +24,22 @@ import java.util.ArrayList;
 public class MainMenuScreen implements Screen {
 
     private final Stage stage;
-    private static int currX;
-    public static int col_width;
-    public static int row_height;
     private final MainGame game;
+    TextButton.TextButtonStyle buttonStyle;
+    private Label.LabelStyle labelStyle;
 
     MainMenuScreen(final MainGame game) {
         this.game = game;
+        stage = new Stage();
 
-        stage = new Stage(new ScreenViewport());
-        row_height = stage.getViewport().getScreenWidth() / 12;
-        col_width = stage.getViewport().getScreenWidth() / 12;
+        buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.up = this.game.skin.getDrawable("button");
+        buttonStyle.down = this.game.skin.getDrawable("button-down");
+        buttonStyle.over = this.game.skin.getDrawable("button-over");
+        buttonStyle.font = this.game.font;
 
-        stage.addActor(createLabel());
+        labelStyle = new Label.LabelStyle();
+        labelStyle.font = this.game.font;
 
         ArrayList<Screen> gameScreens = new ArrayList<Screen>();
         gameScreens.add(new ActionScreen(game, this));
@@ -47,55 +50,51 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new InvadersMenu(game, this));
         gameScreens.add(new CubocyMenu(game, this));
 
+        // Create a table that fills the screen. Everything else will go inside this table.
+        Table table = new Table();
+        table.setFillParent(true);
+//        table.setDebug(true);
+
+        table.add(createTitleLabel());
+        table.row().padTop(50);
+
+        Button b;
         for (Screen gameScreen : gameScreens) {
-            stage.addActor(createGameButton(gameScreen));
-            currX += col_width;
+            b = createGameButton(gameScreen);
+            stage.addActor(b);
+            table.add(b).width(150);
+            table.row().padTop(10);
         }
-        currX = 0;
+        stage.addActor(table);
     }
 
-    private Label createLabel() {
+    private Label createTitleLabel() {
         Label title = new Label("My games", game.skin);
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = this.game.font;
-        title.setStyle(style);
-        title.setSize(stage.getViewport().getScreenWidth(), row_height * 2);
-        title.setPosition(0, Gdx.graphics.getHeight() - row_height * 2);
+        title.setFontScale(2);
+        title.setStyle(labelStyle);
         title.setAlignment(Align.center);
         return title;
     }
 
     private Button createGameButton(final Screen gameScreen) {
-        TextButton dropGameButton;
+        TextButton gameButton;
         if (gameScreen instanceof GenericGameScreen) {
             GenericGameScreen genericGameScreen = (GenericGameScreen) gameScreen;
-            dropGameButton = new TextButton(genericGameScreen.title, this.game.skin);
+            gameButton = new TextButton(genericGameScreen.title, this.game.skin);
         } else {
             Gdx.app.log("ERROR", "Screen should be instance of GenericGameScreen");
             return null;
         }
 
-        dropGameButton.setSize(col_width, row_height);
-        dropGameButton.setPosition(currX + col_width, Gdx.graphics.getHeight() - row_height * 3);
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = this.game.skin.getDrawable("button");
-        style.down = this.game.skin.getDrawable("button-down");
-        style.over = this.game.skin.getDrawable("button-over");
-        style.font = this.game.font;
-        dropGameButton.setStyle(style);
-        dropGameButton.addListener(new InputListener() {
+        gameButton.setStyle(buttonStyle);
+        gameButton.addListener(new ClickListener() {
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(gameScreen);
             }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
         });
-        dropGameButton.getLabel().setWrap(true);
-        return dropGameButton;
+        gameButton.getLabel().setWrap(true);
+        return gameButton;
     }
 
     @Override

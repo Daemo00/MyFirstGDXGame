@@ -52,7 +52,7 @@ public abstract class InvadersScreen extends GenericGameScreen {
     public void render(float delta) {
         update(delta);
         draw(delta);
-        postRender();
+        renderStages();
     }
 
     @Override

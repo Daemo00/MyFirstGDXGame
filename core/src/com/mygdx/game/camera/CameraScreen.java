@@ -1,6 +1,5 @@
 package com.mygdx.game.camera;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -17,26 +16,20 @@ public class CameraScreen extends GenericGameScreen {
 
     public CameraScreen(MainGame game, MainMenuScreen mainMenuScreen) {
         super(game, "Camera", mainMenuScreen);
-
-        Image map = new Image(new Texture("map.jpg"));
-        stage.addActor(map);
-        camera = (OrthographicCamera) stage.getViewport().getCamera();
+        gameStage.addActor(new Image(new Texture("camera/map.jpg")));
+        camera = (OrthographicCamera) gameStage.getViewport().getCamera();
         camera.translate(startX, startY);
         startTime = System.currentTimeMillis();
     }
 
     @Override
     public void render(float delta) {
-        preRender();
+        super.render(delta);
         long secondFromStart = System.currentTimeMillis() - startTime;
         float animation_duration = 15000;
         percent = (secondFromStart % animation_duration) / animation_duration;
         percent = (float) Math.cos(percent * Math.PI * 2) / 2 + 0.5f;
-        Gdx.app.log("render", "secondFromStart:" + secondFromStart + ", %:" + percent);
         moveCamera();
-        stage.act();
-        stage.draw();
-        postRender();
     }
 
     private void moveCamera() {

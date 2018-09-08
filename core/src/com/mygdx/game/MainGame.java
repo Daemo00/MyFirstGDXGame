@@ -2,13 +2,10 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,27 +20,16 @@ public class MainGame extends Game {
 
     public Skin skin;
     public BitmapFont font;
-    private SpriteBatch batch;
-    /**
-     * Music needs to be a class property to prevent being disposed.
-     */
-    private Music music;
-    private FPSLogger fps;
-
     private Controller controller;
     private final ControllerAdapter controllerListener = new ControllerAdapter() {
         @Override
         public void connected(Controller c) {
-            if (controller == null) {
-                controller = c;
-            }
+            if (controller == null) controller = c;
         }
 
         @Override
         public void disconnected(Controller c) {
-            if (controller == c) {
-                controller = null;
-            }
+            if (controller == c) controller = null;
         }
     };
     private MainMenuScreen mainMenuScreen;
@@ -53,22 +39,26 @@ public class MainGame extends Game {
     }
 
     public void create() {
-        batch = new SpriteBatch();
-        FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("skin/arial.ttf"));
-        font = createFont(gen); //16dp == 12pt
-        gen.dispose();
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        skin.addRegions(new TextureAtlas("skin/uiskin.atlas"));
-        mainMenuScreen = new MainMenuScreen(this);
-        this.setScreen(mainMenuScreen);
+        createFont();
+        createSkin();
+        manageControllers();
+        Gdx.input.setCatchBackKey(true);
+        this.setScreen(mainMenuScreen = new MainMenuScreen(this));
+    }
+
+    private void manageControllers() {
         Array<Controller> controllers = Controllers.getControllers();
-        if (controllers.size > 0) {
-            controller = controllers.first();
-        }
+        if (controllers.size > 0) controller = controllers.first();
         Controllers.addListener(controllerListener);
     }
 
-    private BitmapFont createFont(FreeTypeFontGenerator ftfg) {
+    private void createSkin() {
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        skin.addRegions(new TextureAtlas("skin/uiskin.atlas"));
+    }
+
+    private void createFont() {
+        FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("skin/arial.ttf"));
         // Fixing screen size thanks to https://gamedev.stackexchange.com/a/77674/119718
         int scalingFactor = 1;
         switch (Gdx.app.getType()) {
@@ -84,7 +74,8 @@ public class MainGame extends Game {
         }
         FreeTypeFontGenerator.FreeTypeFontParameter freeTypeFontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         freeTypeFontParameter.size = (int) (16 * Gdx.graphics.getDensity() * scalingFactor);
-        return ftfg.generateFont(freeTypeFontParameter);
+        font = gen.generateFont(freeTypeFontParameter);
+        gen.dispose();
     }
 
     private void renderInvaders() {
@@ -116,15 +107,8 @@ public class MainGame extends Game {
                 }
             }
         }
-
-        // fps.log();
     }
 
-    /**
-     * For this game each of our screens is an instance of InvadersScreen.
-     *
-     * @return the currently active {@link InvadersScreen}.
-     */
     private InvadersScreen getInvaderScreen() {
         return (InvadersScreen) super.getScreen();
     }
@@ -132,14 +116,12 @@ public class MainGame extends Game {
     public void render() {
         super.render(); //important!
         if (getScreen() instanceof InvadersScreen) {
-            InvadersScreen invadersScreen = (InvadersScreen) getScreen();
             renderInvaders();
         }
     }
 
     public void dispose() {
         super.dispose();
-        batch.dispose();
         font.dispose();
         skin.dispose();
         screen.dispose();

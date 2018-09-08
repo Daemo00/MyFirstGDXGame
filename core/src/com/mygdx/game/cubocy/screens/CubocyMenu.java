@@ -28,7 +28,7 @@ public class CubocyMenu extends CubocScreen {
 
     @Override
     public void render(float delta) {
-        preRender();
+        super.render(delta);
         batch.begin();
         batch.draw(title, 0, 0);
         batch.end();
@@ -39,7 +39,6 @@ public class CubocyMenu extends CubocScreen {
                 game.setScreen(new IntroScreen(game, mainMenuScreen));
             }
         }
-        postRender();
     }
 
     @Override

@@ -28,7 +28,7 @@ public class IntroScreen extends CubocScreen {
 
     @Override
     public void render(float delta) {
-        preRender();
+        super.render(delta);
         batch.begin();
         batch.draw(intro, 0, 0);
         batch.end();
@@ -39,7 +39,6 @@ public class IntroScreen extends CubocScreen {
                 game.setScreen(new GameScreen(game, mainMenuScreen));
             }
         }
-        postRender();
     }
 
     @Override

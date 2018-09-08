@@ -2,26 +2,23 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import static com.mygdx.game.MainMenuScreen.col_width;
-import static com.mygdx.game.MainMenuScreen.row_height;
 
 public class GenericGameScreen implements Screen {
 
     protected final MainGame game;
-    protected final Stage stage;
+    protected final Stage gameStage;
     protected final MainMenuScreen mainMenuScreen;
-    protected final InputMultiplexer multiplexer;
+    protected final Stage HUDStage;
     final String title;
+    private final MyInputMultiplexer multiplexer;
 
 
     protected GenericGameScreen(MainGame game, String title, MainMenuScreen mainMenuScreen) {
@@ -29,11 +26,10 @@ public class GenericGameScreen implements Screen {
         this.title = title;
         this.mainMenuScreen = mainMenuScreen;
 
-        stage = new MyStage(new ScreenViewport());
-        stage.addActor(createBackButton());
-        Gdx.input.setCatchBackKey(true);
-        multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(stage);
+        multiplexer = new MyInputMultiplexer();
+        multiplexer.addProcessor(HUDStage = new Stage());
+        multiplexer.addProcessor(gameStage = new Stage());
+        HUDStage.addActor(createBackButton());
     }
 
     @Override
@@ -42,26 +38,18 @@ public class GenericGameScreen implements Screen {
     }
 
     private Button createBackButton() {
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = this.game.skin.getDrawable("button");
-        style.down = this.game.skin.getDrawable("button-down");
-        style.font = this.game.font;
-        TextButton backGameButton = new TextButton("Back", style);
-        backGameButton.setSize(col_width, row_height);
-        backGameButton.setPosition(Gdx.graphics.getWidth() - col_width, Gdx.graphics.getHeight() - row_height);
-        backGameButton.addListener(new InputListener() {
+        TextButton backGameButton = new TextButton("Back", mainMenuScreen.buttonStyle);
+        backGameButton.getLabel().setWrap(true);
+        backGameButton.setPosition(
+                Gdx.graphics.getWidth() - backGameButton.getWidth(),
+                Gdx.graphics.getHeight() - backGameButton.getHeight());
+        backGameButton.addListener(new ClickListener() {
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
                 backAction();
-                return true;
             }
         });
-        backGameButton.getLabel().setWrap(true);
         return backGameButton;
     }
 
@@ -69,19 +57,20 @@ public class GenericGameScreen implements Screen {
         game.setScreen(mainMenuScreen);
     }
 
-    protected void preRender() {
+    @Override
+    public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if (Gdx.input.isKeyPressed(Input.Keys.BACK))
             backAction();
+        renderStages();
     }
 
-    @Override
-    public void render(float delta) {
+    protected void renderStages() {
+        HUDStage.act();
+        gameStage.act();
 
-    }
-
-    protected void postRender() {
-        stage.draw();
+        gameStage.draw();
+        HUDStage.draw();
     }
 
     @Override
@@ -106,6 +95,7 @@ public class GenericGameScreen implements Screen {
 
     @Override
     public void dispose() {
-        stage.dispose();
+        HUDStage.dispose();
+        gameStage.dispose();
     }
 }

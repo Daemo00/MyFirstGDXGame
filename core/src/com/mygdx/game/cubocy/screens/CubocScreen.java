@@ -18,13 +18,6 @@ public abstract class CubocScreen extends GenericGameScreen {
     }
 
     @Override
-    public void render(float delta) {
-        super.render(delta);
-        preRender();
-        postRender();
-    }
-
-    @Override
     public void show() {
         super.show();
     }
