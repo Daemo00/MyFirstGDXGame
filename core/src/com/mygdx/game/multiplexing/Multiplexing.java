@@ -32,7 +32,6 @@ public class Multiplexing extends GenericGameScreen {
         multiplexer.addProcessor(UIStage);
         multiplexer.addProcessor(gameStage);
 
-
         Image map = new Image(new Texture("map.jpg"));
         map.addListener(new ActorGestureListener() {
             @Override
@@ -63,22 +62,7 @@ public class Multiplexing extends GenericGameScreen {
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 camera.zoom = slider.getValue();
                 camera.update();
-                //Gdx.app.log("touchDragged","slider Value:"+slider.getValue());
                 super.touchDragged(event, x, y, pointer);
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("up", "slider Value:" + slider.getValue());
-
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                Gdx.app.log("down", "slider Value:" + slider.getValue());
-
-                return true;
             }
         });
         UIStage.addActor(slider);
