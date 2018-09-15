@@ -65,17 +65,17 @@ class PreferencesScreen extends GenericGameScreen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.add(titleLabel).colspan(2);
-        table.row();
+        table.add(titleLabel).colspan(2).pad(10);
+        table.row().pad(5);
         table.add(volumeMusicLabel);
         table.add(volumeMusicSlider);
-        table.row();
+        table.row().pad(5);
         table.add(musicOnOffLabel);
         table.add(musicCheckbox);
-        table.row();
+        table.row().pad(5);
         table.add(volumeSoundLabel);
         table.add(soundMusicSlider);
-        table.row();
+        table.row().pad(5);
         table.add(soundOnOffLabel);
         table.add(soundCheckbox);
         gameStage.addActor(table);

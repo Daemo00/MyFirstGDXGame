@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.action.ActionScreen;
+import com.mygdx.game.box2d.Box2DScreen;
 import com.mygdx.game.camera.CameraScreen;
 import com.mygdx.game.cubocy.screens.CubocyMenu;
 import com.mygdx.game.drop.DropScreen;
@@ -50,6 +51,7 @@ public class MainMenuScreen implements Screen {
         gameScreens.add(new InvadersMenu(game, this));
         gameScreens.add(new CubocyMenu(game, this));
         gameScreens.add(new PreferencesScreen(game, this));
+        gameScreens.add(new Box2DScreen(game, this));
 
         // Create a table that fills the screen. Everything else will go inside this table.
         Table table = new Table();
