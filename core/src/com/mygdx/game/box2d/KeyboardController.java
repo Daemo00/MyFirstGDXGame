@@ -6,7 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class KeyboardController implements InputProcessor {
     final Vector2 mouseLocation = new Vector2();
-    boolean right, left, up, down;
+    public boolean right;
+    public boolean left;
+    public boolean up;
+    boolean down;
     boolean isMouse1Down, isMouse2Down, isMouse3Down;
     private boolean isDragged;
 
