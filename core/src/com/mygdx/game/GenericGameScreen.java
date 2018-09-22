@@ -18,7 +18,7 @@ public class GenericGameScreen implements Screen {
     protected final MainMenuScreen mainMenuScreen;
     protected final Stage HUDStage;
     final String title;
-    private final MyInputMultiplexer multiplexer;
+    protected MyInputMultiplexer multiplexer;
 
 
     protected GenericGameScreen(MainGame game, String title, MainMenuScreen mainMenuScreen) {

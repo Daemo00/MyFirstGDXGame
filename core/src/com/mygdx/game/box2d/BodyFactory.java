@@ -84,6 +84,22 @@ public class BodyFactory {
         return makeCirclePolyBody(posx, posy, radius, material, bodyType, false);
     }
 
+    Body makeBoxBody(float posx, float posy, float dx, float dy, int material, BodyDef.BodyType bodyType, boolean fixedRotation) {
+        // create a definition
+        BodyDef boxBodyDef = new BodyDef();
+        boxBodyDef.type = bodyType;
+        boxBodyDef.position.x = posx;
+        boxBodyDef.position.y = posy;
+        boxBodyDef.fixedRotation = fixedRotation;
+
+        //create the body to attach said definition
+        Body boxBody = world.createBody(boxBodyDef);
+        PolygonShape boxShape = new PolygonShape();
+        boxShape.setAsBox(dx, dy);
+        boxBody.createFixture(makeFixture(material, boxShape));
+        boxShape.dispose();
+        return boxBody;
+    }
     public Body makePolygonShapeBody(int verticesNbr, float posx, float posy, int material, BodyDef.BodyType bodyType) {
         BodyDef boxBodyDef = new BodyDef();
         boxBodyDef.type = bodyType;

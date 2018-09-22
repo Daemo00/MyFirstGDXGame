@@ -1,6 +1,9 @@
 package com.mygdx.game.box2d;
 
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -8,14 +11,24 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class B2DModel {
-    private final Body player;
+    static final int BOING_SOUND = 0;
+    private static final int PING_SOUND = 1;
+    final Body player;
+    private final Sound ping;
+    private final Sound boing;
     public World world;
     private Body bodyd;
     private Body bodys;
     private Body bodyk;
     public boolean isSwimming = false;
+    private KeyboardController controller;
+    private OrthographicCamera camera;
+    private Box2DAssetManager assetManager;
 
-    B2DModel() {
+    B2DModel(KeyboardController controller, OrthographicCamera cam, Box2DAssetManager assetManager) {
+        this.controller = controller;
+        camera = cam;
+        this.assetManager = assetManager;
         world = new World(new Vector2(0, -10), true);
         world.setContactListener(new Box2DContactListener(this));
         createFloor();
@@ -51,20 +64,40 @@ public class B2DModel {
         BodyFactory bodyFactory = BodyFactory.getInstance(world);
 
         // add a player
-        player = bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyDef.BodyType.DynamicBody);
+        player = bodyFactory.makeCirclePolyBody(0, 0, 2, BodyFactory.RUBBER, BodyDef.BodyType.DynamicBody);
 
         // add some water
-        Body water = bodyFactory.makeCirclePolyBody(1, -8, 40, BodyFactory.RUBBER, BodyDef.BodyType.StaticBody);
+        Body water = bodyFactory.makeBoxBody(0, 0, 40, 2, BodyFactory.RUBBER, BodyDef.BodyType.StaticBody, false);
         water.setUserData("IAMTHESEA");
         // make the water a sensor so it doesn't obstruct our player
         bodyFactory.makeAllFixturesSensors(water);
+
+        assetManager.queueAddSounds();
+        assetManager.manager.finishLoading();
+        ping = assetManager.manager.get(assetManager.pingSound, Sound.class);
+        boing = assetManager.manager.get(assetManager.boingSound, Sound.class);
     }
 
     // our game logic here
     public void logicStep(float delta) {
+        if (controller.left) {
+            player.applyForceToCenter(-10, 0, true);
+        } else if (controller.right) {
+            player.applyForceToCenter(10, 0, true);
+        } else if (controller.up) {
+            player.applyForceToCenter(0, 10, true);
+        } else if (controller.down) {
+            player.applyForceToCenter(0, -10, true);
+        }
         if (isSwimming) {
             player.applyForceToCenter(0, 40, true);
         }
+
+        // check if mouse1 is down (player click) then if true check if point intersects
+        if (controller.isMouse1Down && pointIntersectsBody(player, controller.mouseLocation)) {
+            System.out.println("Player was clicked");
+        }
+
         world.step(delta, 3, 3);
     }
 
@@ -141,5 +174,22 @@ public class B2DModel {
         shape.dispose();
 
         bodyk.setLinearVelocity(0, 0.75f);
+    }
+
+    private boolean pointIntersectsBody(Body body, Vector2 mouseLocation) {
+        Vector3 mousePos = new Vector3(mouseLocation, 0); //convert mouseLocation to 3D position
+        camera.unproject(mousePos); // convert from screen position to world position
+        return body.getFixtureList().first().testPoint(mousePos.x, mousePos.y);
+    }
+
+    public void playSound(int sound) {
+        switch (sound) {
+            case BOING_SOUND:
+                boing.play();
+                break;
+            case PING_SOUND:
+                ping.play();
+                break;
+        }
     }
 }

@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import static com.mygdx.game.box2d.B2DModel.BOING_SOUND;
+
 public class Box2DContactListener implements ContactListener {
 
     private B2DModel parent;
@@ -37,6 +39,7 @@ public class Box2DContactListener implements ContactListener {
     private void shootUpInAir(Fixture staticFixture, Fixture otherFixture) {
         System.out.println("Adding Force");
         otherFixture.getBody().applyForceToCenter(new Vector2(-100000, -100000), true);
+        parent.playSound(BOING_SOUND);
     }
 
     @Override

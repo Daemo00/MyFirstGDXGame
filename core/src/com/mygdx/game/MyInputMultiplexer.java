@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 
-class MyInputMultiplexer extends InputMultiplexer {
+public class MyInputMultiplexer extends InputMultiplexer {
 
     @Override
     public boolean keyDown(int keyCode) {
