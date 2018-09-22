@@ -30,6 +30,8 @@ public class PlayerControlSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         Box2DBodyComponent b2body = bodm.get(entity);
         StateComponent state = sm.get(entity);
+        PlayerComponent player = pm.get(entity);
+        player.cam.position.y = b2body.body.getPosition().y;
 
         if (b2body.body.getLinearVelocity().y > 0) {
             state.set(StateComponent.STATE_FALLING);
