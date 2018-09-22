@@ -26,7 +26,7 @@ public class Box2DLoadingScreen extends GenericGameScreen {
     private Animation<TextureRegion> flameAnimation;
     private Box2DAssetManager assetManager = new Box2DAssetManager();
     private int currentLoadingStage;
-    private float countDown = 5;
+    private float countDown = 1;
     private float stateTime;
     private Image titleImage;
     private Table loadingTable;
@@ -52,7 +52,7 @@ public class Box2DLoadingScreen extends GenericGameScreen {
         atlas = assetManager.manager.get(assetManager.loadingImages);
         gameTitle = atlas.findRegion("staying-alight-logo");
         dash = atlas.findRegion("loading-dash");
-        flameAnimation = new Animation(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);  //new
+        flameAnimation = new Animation<TextureRegion>(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);  //new
         background = atlas.findRegion("flamebackground");
         copyright = atlas.findRegion("copyright");
     }

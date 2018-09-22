@@ -12,10 +12,10 @@ import com.mygdx.game.box2d.entity.components.StateComponent;
 
 public class PlayerControlSystem extends IteratingSystem {
 
-    ComponentMapper<PlayerComponent> pm;
-    ComponentMapper<Box2DBodyComponent> bodm;
-    ComponentMapper<StateComponent> sm;
-    KeyboardController controller;
+    private ComponentMapper<PlayerComponent> pm;
+    private ComponentMapper<Box2DBodyComponent> bodm;
+    private ComponentMapper<StateComponent> sm;
+    private KeyboardController controller;
 
 
     public PlayerControlSystem(KeyboardController keyCon) {
@@ -58,7 +58,7 @@ public class PlayerControlSystem extends IteratingSystem {
         if (controller.up &&
                 (state.get() == StateComponent.STATE_NORMAL || state.get() == StateComponent.STATE_MOVING)) {
             //b2body.body.applyForceToCenter(0, 3000,true);
-            b2body.body.applyLinearImpulse(0, 75f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
+            b2body.body.applyLinearImpulse(0, 60f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
             state.set(StateComponent.STATE_JUMPING);
         }
     }

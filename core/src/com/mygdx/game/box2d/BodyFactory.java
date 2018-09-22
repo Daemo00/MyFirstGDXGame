@@ -63,7 +63,7 @@ public class BodyFactory {
         return fixtureDef;
     }
 
-    private Body makeCirclePolyBody(float posx, float posy, float radius, int material, BodyDef.BodyType bodyType, boolean fixedRotation) {
+    Body makeCirclePolyBody(float posx, float posy, float radius, int material, BodyDef.BodyType bodyType, boolean fixedRotation) {
         // create a definition
         BodyDef boxBodyDef = new BodyDef();
         boxBodyDef.type = bodyType;
@@ -71,7 +71,7 @@ public class BodyFactory {
         boxBodyDef.position.y = posy;
         boxBodyDef.fixedRotation = fixedRotation;
 
-        //create the body to attach said definition
+        // create the body to attach said definition
         Body boxBody = world.createBody(boxBodyDef);
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(radius / 2);
