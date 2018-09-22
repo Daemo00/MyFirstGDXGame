@@ -1,32 +1,50 @@
 package com.mygdx.game.box2d;
 
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
 import com.mygdx.game.MainMenuScreen;
+import com.mygdx.game.box2d.actors.LoadingBarPart;
 
 public class Box2DLoadingScreen extends GenericGameScreen {
     private static final int FONT = 0;
     private static final int PARTY = 1;
     private static final int SOUND = 2;
     private static final int MUSIC = 3;
-    private final TextureAtlas atlas;
-    private final TextureAtlas.AtlasRegion gameTitle;
-    private final TextureAtlas.AtlasRegion dash;
-    private final SpriteBatch sb;
-    private final Animation<TextureRegion> flameAnimation;
+    private final Stage stage;
+    private TextureAtlas atlas;
+    private TextureAtlas.AtlasRegion gameTitle;
+    private TextureAtlas.AtlasRegion dash;
+    private Animation<TextureRegion> flameAnimation;
     private Box2DAssetManager assetManager = new Box2DAssetManager();
     private int currentLoadingStage;
     private float countDown = 5;
     private float stateTime;
+    private Image titleImage;
+    private Table loadingTable;
+    private Table table;
+    private TextureAtlas.AtlasRegion copyright;
+    private TextureAtlas.AtlasRegion background;
 
     public Box2DLoadingScreen(MainGame game, MainMenuScreen mainMenuScreen) {
         super(game, "Box2D Loading", mainMenuScreen);
-        // load loading images and wait until finished
+        stage = new Stage(new ScreenViewport());
+
+        loadAssets();
+        // initiate queueing of images but don't start loading
+        assetManager.queueAddGameImages();
+        System.out.println("Loading images....");
+    }
+
+    private void loadAssets() {
         assetManager.queueAddLoadingImages();
         assetManager.manager.finishLoading();
 
@@ -35,71 +53,80 @@ public class Box2DLoadingScreen extends GenericGameScreen {
         gameTitle = atlas.findRegion("staying-alight-logo");
         dash = atlas.findRegion("loading-dash");
         flameAnimation = new Animation(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);  //new
-        // initiate queueing of images but don't start loading
-        assetManager.queueAddGameImages();
-        System.out.println("Loading images....");
-        sb = new SpriteBatch();
-        sb.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        background = atlas.findRegion("flamebackground");
+        copyright = atlas.findRegion("copyright");
     }
-
     @Override
     public void show() {
         super.show();
-        stateTime = 0;
+        titleImage = new Image(gameTitle);
+
+        table = new Table();
+        table.setFillParent(true);
+        table.setDebug(false);
+        table.setBackground(new TiledDrawable(background));
+
+        loadingTable = new Table();
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash, flameAnimation));
+
+
+        table.add(titleImage).align(Align.center).pad(10, 0, 0, 0).colspan(10);
+        table.row(); // move to next row
+        table.add(loadingTable).width(400);
+
+        stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
 
-        // start SpriteBatch and draw the logo
-        sb.begin();
-        stateTime += delta; // Accumulate elapsed animation time  
-        // Get current frame of animation for the current stateTime
-        TextureRegion currentFrame = flameAnimation.getKeyFrame(stateTime, true);
-
-        drawLoadingBar(currentLoadingStage * 2, currentFrame);
-        sb.draw(gameTitle, 135, 250);
-        sb.end();
-
-        // check if the asset manager has finished loading
         if (assetManager.manager.update()) { // Load some, will return true if done loading
             currentLoadingStage += 1;
+            if (currentLoadingStage <= 5) {
+                loadingTable.getCells().get((currentLoadingStage - 1) * 2).getActor().setVisible(true);  // new
+                loadingTable.getCells().get((currentLoadingStage - 1) * 2 + 1).getActor().setVisible(true);
+            }
             switch (currentLoadingStage) {
                 case FONT:
                     System.out.println("Loading fonts....");
-                    assetManager.queueAddFonts(); // first load done, now start fonts
+                    assetManager.queueAddFonts();
                     break;
                 case PARTY:
                     System.out.println("Loading Particle Effects....");
-                    assetManager.queueAddParticleEffects(); // fonts are done now do party effects
+                    assetManager.queueAddParticleEffects();
                     break;
                 case SOUND:
                     System.out.println("Loading Sounds....");
                     assetManager.queueAddSounds();
                     break;
                 case MUSIC:
-                    System.out.println("Loading music....");
+                    System.out.println("Loading fonts....");
                     assetManager.queueAddMusic();
                     break;
                 case 5:
-                    System.out.println("Finished"); // all done
+                    System.out.println("Finished");
                     break;
             }
             if (currentLoadingStage > 5) {
-                countDown -= delta;  // timer to stay on loading screen for short preiod once done loading
-                currentLoadingStage = 5;  // cap loading stage to 5 as will use later to display progress bar anbd more than 5 would go off the screen
-                if (countDown < 0) { // countdown is complete
-                    game.setScreen(new Box2DScreen(game, mainMenuScreen, assetManager));  /// go to menu screen
+                countDown -= delta;
+                currentLoadingStage = 5;
+                if (countDown < 0) {
+                    game.setScreen(new Box2DScreen(game, mainMenuScreen, assetManager));
                 }
             }
         }
-    }
 
-    private void drawLoadingBar(int stage, TextureRegion currentFrame) {
-        for (int i = 0; i < stage; i++) {
-            sb.draw(currentFrame, 50 + (i * 50), 150, 50, 50);
-            sb.draw(dash, 35 + (i * 50), 140, 80, 80);
-        }
+        stage.act();
+        stage.draw();
     }
 }
