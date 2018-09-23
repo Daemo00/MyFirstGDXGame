@@ -5,22 +5,27 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.box2d.KeyboardController;
+import com.mygdx.game.box2d.LevelFactory;
 import com.mygdx.game.box2d.entity.components.Box2DBodyComponent;
 import com.mygdx.game.box2d.entity.components.PlayerComponent;
 import com.mygdx.game.box2d.entity.components.StateComponent;
 
 public class PlayerControlSystem extends IteratingSystem {
 
+    public static final float BULLET_SPEED = 10f;
     private ComponentMapper<PlayerComponent> pm;
     private ComponentMapper<Box2DBodyComponent> bodm;
     private ComponentMapper<StateComponent> sm;
     private KeyboardController controller;
+    private LevelFactory lvlFactory;
 
 
-    public PlayerControlSystem(KeyboardController keyCon) {
+    public PlayerControlSystem(KeyboardController keyCon, LevelFactory lvlFactory) {
         super(Family.all(PlayerComponent.class).get());
         controller = keyCon;
+        this.lvlFactory = lvlFactory;
         pm = ComponentMapper.getFor(PlayerComponent.class);
         bodm = ComponentMapper.getFor(Box2DBodyComponent.class);
         sm = ComponentMapper.getFor(StateComponent.class);
@@ -69,6 +74,30 @@ public class PlayerControlSystem extends IteratingSystem {
             b2body.body.applyLinearImpulse(0, 175f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
             state.set(StateComponent.STATE_JUMPING);
             player.onSpring = false;
+        }
+        if (controller.isMouse1Down) { // if mouse button is pressed
+            // user wants to fire
+            player.timeSinceLastShot += deltaTime;
+            if (player.timeSinceLastShot >= player.shootDelay) { // check the player hasn't just shot
+                //player can shoot so do player shoot
+                Vector3 mousePos = new Vector3(controller.mouseLocation.x, controller.mouseLocation.y, 0); // get mouse position
+                player.cam.unproject(mousePos); // convert position from screen to box2d world position
+                float speed = BULLET_SPEED;  // set the speed of the bullet
+                float shooterX = b2body.body.getPosition().x; // get player location
+                float shooterY = b2body.body.getPosition().y; // get player location
+                float velx = mousePos.x - shooterX; // get distance from shooter to target on x plain
+                float vely = mousePos.y - shooterY; // get distance from shooter to target on y plain
+                float length = (float) Math.sqrt(velx * velx + vely * vely); // get distance to target direct
+                if (length != 0) {
+                    velx = velx / length;  // get required x velocity to aim at target
+                    vely = vely / length;  // get required y velocity to aim at target
+                }
+                System.out.println("Shoooot!");
+                // create a bullet
+                lvlFactory.createBullet(shooterX, shooterY, velx * speed, vely * speed);
+                //reset timeSinceLastShot
+                player.timeSinceLastShot = 0;
+            }
         }
     }
 }

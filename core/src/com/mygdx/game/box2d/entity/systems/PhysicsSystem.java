@@ -39,6 +39,11 @@ public class PhysicsSystem extends IteratingSystem {
             tfm.position.x = position.x;
             tfm.position.y = position.y;
             tfm.rotation = bodyComp.body.getAngle() * MathUtils.radiansToDegrees;
+            if (bodyComp.isDead) {
+                System.out.println("Removing a corpse");
+                world.destroyBody(bodyComp.body);
+                getEngine().removeEntity(entity);
+            }
         }
         bodiesQueue.clear();
     }

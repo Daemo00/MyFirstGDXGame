@@ -20,30 +20,24 @@ public class Box2DContactListener implements ContactListener {
         Fixture fb = contact.getFixtureB();
         System.out.println(fa.getBody().getType() + " has hit " + fb.getBody().getType());
 
-        if (fa.getBody().getUserData() instanceof Entity) {
-            Entity ent = (Entity) fa.getBody().getUserData();
-            entityCollision(ent, fb);
-            return;
-        } else if (fb.getBody().getUserData() instanceof Entity) {
-            Entity ent = (Entity) fb.getBody().getUserData();
-            entityCollision(ent, fa);
+        if (fa.getBody().getUserData() instanceof Entity
+                && fb.getBody().getUserData() instanceof Entity) {
+            Entity entA = (Entity) fa.getBody().getUserData();
+            Entity entB = (Entity) fb.getBody().getUserData();
+            entityCollision(entA, entB);
             return;
         }
+        System.out.println("Collision not managed");
     }
 
-    private void entityCollision(Entity ent, Fixture fb) {
-        if (fb.getBody().getUserData() instanceof Entity) {
-            Entity colEnt = (Entity) fb.getBody().getUserData();
+    private void entityCollision(Entity entA, Entity entB) {
+        CollisionComponent colA = entA.getComponent(CollisionComponent.class);
+        CollisionComponent colB = entB.getComponent(CollisionComponent.class);
 
-            CollisionComponent col = ent.getComponent(CollisionComponent.class);
-            CollisionComponent colb = colEnt.getComponent(CollisionComponent.class);
-
-            if (col != null) {
-                col.collisionEntity = colEnt;
-            } else if (colb != null) {
-                colb.collisionEntity = ent;
-            }
-        }
+        if (colA != null) colA.collisionEntity = entB;
+        System.out.println("ColA: " + colA);
+        if (colB != null) colB.collisionEntity = entA;
+        System.out.println("ColB: " + colB);
     }
 
     @Override

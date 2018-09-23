@@ -132,4 +132,9 @@ public class Utils {
         pmap.dispose();
     }
 
+    public static TextureRegion makeTextureRegion(float v, float v1, String s) {
+        int fval = (int) v;
+        int gval = (int) v1;
+        return makeTextureRegion(fval, gval, s);
+    }
 }

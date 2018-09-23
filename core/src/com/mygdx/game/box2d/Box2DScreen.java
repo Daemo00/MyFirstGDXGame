@@ -12,14 +12,15 @@ import com.mygdx.game.GenericGameScreen;
 import com.mygdx.game.MainGame;
 import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.box2d.entity.systems.AnimationSystem;
+import com.mygdx.game.box2d.entity.systems.BulletSystem;
 import com.mygdx.game.box2d.entity.systems.CollisionSystem;
+import com.mygdx.game.box2d.entity.systems.EnemySystem;
 import com.mygdx.game.box2d.entity.systems.LevelGenerationSystem;
 import com.mygdx.game.box2d.entity.systems.PhysicsDebugSystem;
 import com.mygdx.game.box2d.entity.systems.PhysicsSystem;
 import com.mygdx.game.box2d.entity.systems.PlayerControlSystem;
 import com.mygdx.game.box2d.entity.systems.RenderingSystem;
 import com.mygdx.game.box2d.entity.systems.WallSystem;
-import com.mygdx.game.box2d.entity.systems.WaterFloorSystem;
 
 public class Box2DScreen extends GenericGameScreen {
     private final Music music;
@@ -46,23 +47,24 @@ public class Box2DScreen extends GenericGameScreen {
         engine = new PooledEngine();
         lvlFactory = new LevelFactory(engine, atlas.findRegion("player"));
 
-
         sb = new SpriteBatch();
         RenderingSystem renderingSystem = new RenderingSystem(sb);
         cam = renderingSystem.getCamera();
         sb.setProjectionMatrix(cam.combined);
+        player = lvlFactory.createPlayer(atlas.findRegion("player"), cam);
 
+        engine.addSystem(new CollisionSystem());
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new PhysicsSystem(lvlFactory.world));
         engine.addSystem(renderingSystem);
         engine.addSystem(new PhysicsDebugSystem(lvlFactory.world, renderingSystem.getCamera()));
-        engine.addSystem(new CollisionSystem());
-        engine.addSystem(new PlayerControlSystem(controller));
+        engine.addSystem(new PlayerControlSystem(controller, lvlFactory));
         engine.addSystem(new LevelGenerationSystem(lvlFactory));
+        engine.addSystem(new EnemySystem());
 
-        player = lvlFactory.createPlayer(atlas.findRegion("player"), cam);
+        engine.addSystem(new BulletSystem(player));
 
-        engine.addSystem(new WaterFloorSystem(player));
+        //engine.addSystem(new WaterFloorSystem(player));
         int floorWidth = (int) (40 * RenderingSystem.PIXELS_PER_METRE);
         int floorHeight = (int) (1 * RenderingSystem.PIXELS_PER_METRE);
         TextureRegion floorRegion = Utils.makeTextureRegion(floorWidth, floorHeight, "11331180");
