@@ -63,5 +63,12 @@ public class PlayerControlSystem extends IteratingSystem {
             b2body.body.applyLinearImpulse(0, 60f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
             state.set(StateComponent.STATE_JUMPING);
         }
+
+        // make player jump very high
+        if (player.onSpring) {
+            b2body.body.applyLinearImpulse(0, 175f, b2body.body.getWorldCenter().x, b2body.body.getWorldCenter().y, true);
+            state.set(StateComponent.STATE_JUMPING);
+            player.onSpring = false;
+        }
     }
 }

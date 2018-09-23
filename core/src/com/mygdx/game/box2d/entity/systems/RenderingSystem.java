@@ -17,7 +17,7 @@ import java.util.Comparator;
 
 public class RenderingSystem extends SortedIteratingSystem {
 
-    static final float PIXELS_PER_METRE = 32.0f; // sets the amount of pixels each metre of box2d objects contains
+    public static final float PIXELS_PER_METRE = 32f; // sets the amount of pixels each metre of box2d objects contains
     public static final float METRES_PER_PIXEL = 1.0f / PIXELS_PER_METRE; // get the ratio for converting pixels to metres
     // this gets the height and width of our camera frustum based off the width and height of the screen and our pixel per meter ratio
     static final float FRUSTUM_WIDTH = Gdx.graphics.getWidth() / PIXELS_PER_METRE;
@@ -49,6 +49,8 @@ public class RenderingSystem extends SortedIteratingSystem {
         // set up the camera to match our screen size
         cam = new OrthographicCamera(FRUSTUM_WIDTH, FRUSTUM_HEIGHT);
         cam.position.set(FRUSTUM_WIDTH / 2f, FRUSTUM_HEIGHT / 2f, 0);
+
+        comparator = new ZComparator();
     }
 
     public static Vector2 getScreenSizeInMeters() {

@@ -14,9 +14,14 @@ import com.mygdx.game.box2d.entity.components.StateComponent;
 import com.mygdx.game.box2d.entity.components.TextureComponent;
 import com.mygdx.game.box2d.entity.components.TransformComponent;
 import com.mygdx.game.box2d.entity.components.TypeComponent;
+import com.mygdx.game.box2d.entity.components.WallComponent;
+import com.mygdx.game.box2d.entity.components.WaterFloorComponent;
+import com.mygdx.game.box2d.entity.systems.RenderingSystem;
 import com.mygdx.game.box2d.simplexnoise.SimplexNoise;
 
 public class LevelFactory {
+    private static final float PLATFORM_WIDTH = 1.5f;
+    private static final float BOUNCE_PLATFORM_WIDTH = 0.5f;
     public World world;
     public int currentLevel = 0;
     private BodyFactory bodyFactory;
@@ -35,48 +40,94 @@ public class LevelFactory {
     }
 
 
-    /**
-     * Creates a pair of platforms per level up to yLevel
-     *
+    /** Creates a pair of platforms per level up to yLevel
      * @param ylevel
      */
     public void generateLevel(int ylevel) {
         while (ylevel > currentLevel) {
             // get noise      sim.getNoise(xpos,ypos,zpos) 3D noise
-            float noise1 = (float) sim.getNoise(1, currentLevel, 0);
-            float noise2 = (float) sim.getNoise(1, currentLevel, 100);
-            float noise3 = (float) sim.getNoise(1, currentLevel, 200);
-            float noise4 = (float) sim.getNoise(1, currentLevel, 300);
-            if (noise1 > 0.2f) {
-                createPlatform(noise2 * 25 + 2, currentLevel * 2);
+
+            float width = RenderingSystem.getScreenSizeInMeters().x;
+            double noise1 = Math.random(); // (float)sim.getNoise(1, currentLevel, 0);  // platform 1 should exist?
+            double noise2 = Math.random(); //(float)sim.getNoise(1, currentLevel, 100);	// if plat 1 exists where on x axis
+            double noise3 = Math.random(); //(float)sim.getNoise(1, currentLevel, 200);	// platform 2 exists?
+            double noise4 = Math.random(); //(float)sim.getNoise(1, currentLevel, 300);	// if 2 exists where on x axis ?
+            double noise5 = Math.random(); //(float)sim.getNoise(1, currentLevel ,300);	// should spring exist on p1?
+            double noise6 = Math.random(); //(float)sim.getNoise(1, currentLevel ,300);	// should spring exists on p2?
+            double noise7 = Math.random(); //(float)sim.getNoise(1, currentLevel, 600);	// should enemy exist?
+            double noise8 = Math.random(); //(float)sim.getNoise(1, currentLevel, 700);	// platform 1 or 2?
+            int y = currentLevel * 2;
+            if (noise1 > 0.5) {
+                float x = (float) ((width - PLATFORM_WIDTH) * noise2);
+                createPlatform(x, y);
+                if (noise5 > 0.5) {
+                    // add bouncy platform
+                    createBouncyPlatform(x, y);
+                }
             }
-            if (noise3 > 0.2f) {
-                createPlatform(noise4 * 25 + 2, currentLevel * 2);
+            if (noise3 > 0.5) {
+                float x = (float) ((width - PLATFORM_WIDTH) * noise4);
+                createPlatform(x, y);
+                if (noise6 > 0.5) {
+                    // add bouncy platform
+                    createBouncyPlatform(x, y);
+                }
             }
             currentLevel++;
         }
     }
 
-    public void createPlatform(float x, float y) {
+    public Entity createBouncyPlatform(float x, float y) {
         Entity entity = engine.createEntity();
+        // create body component
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
-        b2dbody.body = bodyFactory.makeBoxBody(x, y, 1.5f, 0.2f, BodyFactory.STONE, BodyType.StaticBody, false);
+        b2dbody.body = bodyFactory.makeBoxBody(x, y, BOUNCE_PLATFORM_WIDTH, .5f, BodyFactory.STONE, BodyType.StaticBody, false);
+        //make it a sensor so not to impede movement
+        bodyFactory.makeAllFixturesSensors(b2dbody.body);
+
+        // give it a texture..
         TextureComponent texture = engine.createComponent(TextureComponent.class);
         texture.region = floorTex;
+
         TypeComponent type = engine.createComponent(TypeComponent.class);
-        type.type = TypeComponent.SCENERY;
+        type.type = TypeComponent.SPRING;
+
         b2dbody.body.setUserData(entity);
         entity.add(b2dbody);
         entity.add(texture);
         entity.add(type);
         engine.addEntity(entity);
 
+        return entity;
+    }
+
+    public void createPlatform(float x, float y) {
+        // Create the entity
+        Entity entity = engine.createEntity();
+
+        // This entity is of type scenery, so it has the TypeComponent
+        TypeComponent type = engine.createComponent(TypeComponent.class);
+        type.type = TypeComponent.SCENERY;
+        entity.add(type);
+
+        // This entity has a Texture, so it has the TextureComponent
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+        texture.region = floorTex;
+        entity.add(texture);
+
+        // This entity has a body, so it has a BodyComponent
+        Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
+        b2dbody.body = bodyFactory.makeBoxBody(x, y, PLATFORM_WIDTH, 0.2f, BodyFactory.STONE, BodyType.StaticBody, false);
+        b2dbody.body.setUserData(entity);
+        entity.add(b2dbody);
+
+        engine.addEntity(entity);
     }
 
     public void createFloor(TextureRegion tex) {
         Entity entity = engine.createEntity();
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
-        b2dbody.body = bodyFactory.makeBoxBody(0, 0, 100, 0.2f, BodyFactory.STONE, BodyType.StaticBody, false);
+        b2dbody.body = bodyFactory.makeBoxBody(0, 0, RenderingSystem.getScreenSizeInMeters().x, 1, BodyFactory.STONE, BodyType.StaticBody, false);
         TextureComponent texture = engine.createComponent(TextureComponent.class);
         texture.region = tex;
         TypeComponent type = engine.createComponent(TypeComponent.class);
@@ -91,7 +142,37 @@ public class LevelFactory {
         engine.addEntity(entity);
     }
 
-    public void createPlayer(TextureRegion tex, OrthographicCamera cam) {
+    /**
+     * Creates the water entity that steadily moves upwards towards player
+     *
+     * @return
+     */
+    public Entity createWaterFloor(TextureRegion tex) {
+        Entity entity = engine.createEntity();
+        Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
+        TransformComponent position = engine.createComponent(TransformComponent.class);
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+        TypeComponent type = engine.createComponent(TypeComponent.class);
+        WaterFloorComponent waterFloor = engine.createComponent(WaterFloorComponent.class);
+
+        type.type = TypeComponent.ENEMY;
+        texture.region = tex;
+        b2dbody.body = bodyFactory.makeBoxBody(0, -10, RenderingSystem.getScreenSizeInMeters().x, 10, BodyFactory.STONE, BodyType.KinematicBody, true);
+        position.position.set(0, -10, 0);
+        entity.add(b2dbody);
+        entity.add(position);
+        entity.add(texture);
+        entity.add(type);
+        entity.add(waterFloor);
+
+        b2dbody.body.setUserData(entity);
+
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
+    public Entity createPlayer(TextureRegion tex, OrthographicCamera cam) {
 
         Entity entity = engine.createEntity();
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
@@ -104,9 +185,9 @@ public class LevelFactory {
 
 
         player.cam = cam;
-        b2dbody.body = bodyFactory.makeCirclePolyBody(10, 1, 1, BodyFactory.STONE, BodyType.DynamicBody, true);
+        b2dbody.body = bodyFactory.makeCirclePolyBody(RenderingSystem.getScreenSizeInMeters().x / 2, 1, 1, BodyFactory.STONE, BodyType.DynamicBody, true);
         // set object position (x,y,z) z used to define draw order 0 first drawn
-        position.position.set(10, 1, 0);
+        position.position.set(RenderingSystem.getScreenSizeInMeters().x / 2, 1, 0);
         texture.region = tex;
         type.type = TypeComponent.PLAYER;
         stateCom.set(StateComponent.STATE_NORMAL);
@@ -121,6 +202,32 @@ public class LevelFactory {
         entity.add(stateCom);
 
         engine.addEntity(entity);
+        return entity;
+    }
 
+    public void createWalls(TextureRegion wallRegion) {
+
+        createWall(wallRegion, 0);
+        createWall(wallRegion, RenderingSystem.getScreenSizeInMeters().x);
+    }
+
+    private void createWall(TextureRegion wallRegion, float xpos) {
+        Entity entity = engine.createEntity();
+        Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
+        b2dbody.body = bodyFactory.makeBoxBody(xpos, 0, 1, RenderingSystem.getScreenSizeInMeters().y, BodyFactory.STONE, BodyType.KinematicBody, false);
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+        texture.region = wallRegion;
+        TypeComponent type = engine.createComponent(TypeComponent.class);
+        type.type = TypeComponent.SCENERY;
+        WallComponent wall = engine.createComponent(WallComponent.class);
+
+        b2dbody.body.setUserData(entity);
+
+        entity.add(b2dbody);
+        entity.add(texture);
+        entity.add(type);
+        entity.add(wall);
+
+        engine.addEntity(entity);
     }
 }
