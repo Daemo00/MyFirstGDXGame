@@ -45,7 +45,7 @@ public class Box2DScreen extends GenericGameScreen {
         controller = new KeyboardController();
         multiplexer.addProcessor(controller);
         engine = new PooledEngine();
-        lvlFactory = new LevelFactory(engine, atlas.findRegion("player"));
+        lvlFactory = new LevelFactory(engine, atlas);
 
         sb = new SpriteBatch();
         RenderingSystem renderingSystem = new RenderingSystem(sb);

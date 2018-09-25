@@ -9,7 +9,7 @@ public class KeyboardController implements InputProcessor {
     public boolean right;
     public boolean left;
     public boolean up;
-    boolean down;
+    public boolean down;
     public boolean isMouse1Down;
     boolean isMouse2Down;
     boolean isMouse3Down;

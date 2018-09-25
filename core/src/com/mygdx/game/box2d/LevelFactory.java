@@ -3,10 +3,13 @@ package com.mygdx.game.box2d;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.box2d.entity.components.AnimationComponent;
 import com.mygdx.game.box2d.entity.components.Box2DBodyComponent;
 import com.mygdx.game.box2d.entity.components.BulletComponent;
 import com.mygdx.game.box2d.entity.components.CollisionComponent;
@@ -19,12 +22,12 @@ import com.mygdx.game.box2d.entity.components.TypeComponent;
 import com.mygdx.game.box2d.entity.components.WallComponent;
 import com.mygdx.game.box2d.entity.components.WaterFloorComponent;
 import com.mygdx.game.box2d.entity.systems.RenderingSystem;
-import com.mygdx.game.box2d.simplexnoise.SimplexNoise;
 
 public class LevelFactory {
-    private static final float PLATFORM_WIDTH = 1.5f;
+    private static final float PLATFORM_WIDTH = 1f;
+    private static final float PLATFORM_HEIGHT = 0.1f;
     private static final float BOUNCE_PLATFORM_WIDTH = 0.5f;
-    private static final float PLATFORM_HEIGHT = 0.2f;
+    private static final float BOUNCE_PLATFORM_HEIGHT = 0.1f;
     private static final float ENEMY_RADIUS = .5f;
     private static final int PLAYER_RADIUS = 1;
     private static final float BULLET_RADIUS = 0.2f;
@@ -33,23 +36,22 @@ public class LevelFactory {
     public int currentLevel = 0;
     private BodyFactory bodyFactory;
     private PooledEngine engine;
-    private SimplexNoise sim;
     private TextureRegion floorTex;
     private TextureRegion enemyTex;
     private TextureRegion bulletTex;
+    private TextureAtlas atlas;
 
-    LevelFactory(PooledEngine en, TextureRegion floorTexture) {
+    LevelFactory(PooledEngine en, TextureAtlas atlas) {
         engine = en;
-        floorTex = floorTexture;
+        this.atlas = atlas;
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(new Box2DContactListener());
         bodyFactory = BodyFactory.getInstance(world);
         // create a new SimplexNoise (size,roughness,seed)
-        sim = new SimplexNoise(512, 0.85f, 1);
         floorTex = Utils.makeTextureRegion(40 * RenderingSystem.PIXELS_PER_METRE, 0.5f * RenderingSystem.PIXELS_PER_METRE, "111111FF");
-        enemyTex = Utils.makeTextureRegion(1 * RenderingSystem.PIXELS_PER_METRE, 1 * RenderingSystem.PIXELS_PER_METRE, "331111FF");
+        enemyTex = atlas.findRegion("waterdrop");
         bulletTex = Utils.makeTextureRegion(1 * RenderingSystem.PIXELS_PER_METRE, 1 * RenderingSystem.PIXELS_PER_METRE, "331111FF");
-        platformTex = Utils.makeTextureRegion(2 * RenderingSystem.PIXELS_PER_METRE, 0.1f * RenderingSystem.PIXELS_PER_METRE, "221122FF");
+        platformTex = atlas.findRegion("platform");
     }
 
 
@@ -61,26 +63,18 @@ public class LevelFactory {
             // get noise      sim.getNoise(xpos,ypos,zpos) 3D noise
 
             float width = RenderingSystem.getScreenSizeInMeters().x;
-            double noise1 = Math.random(); // (float)sim.getNoise(1, currentLevel, 0);  // platform 1 should exist?
-            double noise2 = Math.random(); //(float)sim.getNoise(1, currentLevel, 100);	// if plat 1 exists where on x axis
-            double noise3 = Math.random(); //(float)sim.getNoise(1, currentLevel, 200);	// platform 2 exists?
-            double noise4 = Math.random(); //(float)sim.getNoise(1, currentLevel, 300);	// if 2 exists where on x axis ?
-            double noise5 = Math.random(); //(float)sim.getNoise(1, currentLevel ,300);	// should spring exist on p1?
-            double noise6 = Math.random(); //(float)sim.getNoise(1, currentLevel ,300);	// should spring exists on p2?
-            double noise7 = Math.random(); //(float)sim.getNoise(1, currentLevel, 600);	// should enemy exist?
-            double noise8 = Math.random(); //(float)sim.getNoise(1, currentLevel, 700);	// platform 1 or 2?
             int y = currentLevel * 2;
-            if (noise1 > 0.5) {
-                float x = (float) ((width - PLATFORM_WIDTH) * noise2);
-                createPlatform(x, y);
-                if (noise5 > 0.5) createBouncyPlatform(x, y);
-                if (noise7 > 0.5) createEnemy(enemyTex, x, y + PLATFORM_HEIGHT + ENEMY_RADIUS);
-            }
-            if (noise3 > 0.5) {
-                float x = (float) ((width - PLATFORM_WIDTH) * noise4);
-                createPlatform(x, y);
-                if (noise6 > 0.5) createBouncyPlatform(x, y);
-                if (noise8 > 0.5) createEnemy(enemyTex, x, y + PLATFORM_HEIGHT + ENEMY_RADIUS);
+            for (int i = 0; i < 5; i++) {
+                double noise1 = Math.random(); // (float)sim.getNoise(1, currentLevel, 0);  // platform 1 should exist?
+                double noise2 = Math.random(); //(float)sim.getNoise(1, currentLevel, 100);	// if plat 1 exists where on x axis
+                double noise3 = Math.random(); //(float)sim.getNoise(1, currentLevel, 200);	// platform 2 exists?
+                double noise4 = Math.random(); //(float)sim.getNoise(1, currentLevel, 300);	// if 2 exists where on x axis ?
+                if (noise1 > 0.5) {
+                    float x = (float) ((width - PLATFORM_WIDTH) * noise2);
+                    createPlatform(x, y);
+                    if (noise3 > 0.5) createBouncyPlatform(x, y);
+                    if (noise4 > 0.5) createEnemy(enemyTex, x, y + PLATFORM_HEIGHT + ENEMY_RADIUS);
+                }
             }
             currentLevel++;
         }
@@ -90,7 +84,7 @@ public class LevelFactory {
         Entity entity = engine.createEntity();
         // create body component
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
-        b2dbody.body = bodyFactory.makeBoxBody(x, y, BOUNCE_PLATFORM_WIDTH, .5f, BodyFactory.STONE, BodyType.StaticBody, false);
+        b2dbody.body = bodyFactory.makeBoxBody(x, y, BOUNCE_PLATFORM_WIDTH, BOUNCE_PLATFORM_HEIGHT, BodyFactory.STONE, BodyType.StaticBody, false);
         //make it a sensor so not to impede movement
         bodyFactory.makeAllFixturesSensors(b2dbody.body);
 
@@ -121,15 +115,18 @@ public class LevelFactory {
 
         // This entity has a Texture, so it has the TextureComponent
         TextureComponent texture = engine.createComponent(TextureComponent.class);
-        texture.region = floorTex;
+        texture.region = platformTex;
         entity.add(texture);
 
         // This entity has a body, so it has a BodyComponent
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
         b2dbody.body = bodyFactory.makeBoxBody(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT, BodyFactory.STONE, BodyType.StaticBody, false);
-        b2dbody.body.setUserData(entity);
         entity.add(b2dbody);
 
+        TransformComponent transformComponent = engine.createComponent(TransformComponent.class);
+        entity.add(transformComponent);
+
+        b2dbody.body.setUserData(entity);
         engine.addEntity(entity);
     }
 
@@ -191,6 +188,7 @@ public class LevelFactory {
         CollisionComponent colComp = engine.createComponent(CollisionComponent.class);
         TypeComponent type = engine.createComponent(TypeComponent.class);
         StateComponent stateCom = engine.createComponent(StateComponent.class);
+        AnimationComponent animCom = engine.createComponent(AnimationComponent.class);
 
 
         player.cam = cam;
@@ -200,6 +198,14 @@ public class LevelFactory {
         texture.region = tex;
         type.type = TypeComponent.PLAYER;
         stateCom.set(StateComponent.STATE_NORMAL);
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(0.1f, atlas.findRegions("flame_a"));
+        anim.setPlayMode(Animation.PlayMode.LOOP);
+        animCom.animations.put(StateComponent.STATE_NORMAL, new Animation<TextureRegion>(1f, atlas.findRegion("player")));
+        animCom.animations.put(StateComponent.STATE_MOVING, new Animation<TextureRegion>(1f, atlas.findRegion("player")));
+        animCom.animations.put(StateComponent.STATE_JUMPING, anim);
+        animCom.animations.put(StateComponent.STATE_FALLING, anim);
+        animCom.animations.put(StateComponent.STATE_HIT, anim);
+
         b2dbody.body.setUserData(entity);
 
         entity.add(colComp);
@@ -209,6 +215,7 @@ public class LevelFactory {
         entity.add(player);
         entity.add(type);
         entity.add(stateCom);
+        entity.add(animCom);
 
         engine.addEntity(entity);
         return entity;
@@ -254,7 +261,6 @@ public class LevelFactory {
         texture.region = tex;
         enemy.xPosCenter = x;
         type.type = TypeComponent.ENEMY;
-        b2dbody.body.setUserData(entity);
 
         entity.add(colComp);
         entity.add(b2dbody);
@@ -263,6 +269,7 @@ public class LevelFactory {
         entity.add(enemy);
         entity.add(type);
 
+        b2dbody.body.setUserData(entity);
         engine.addEntity(entity);
 
         return entity;
@@ -276,6 +283,8 @@ public class LevelFactory {
         TypeComponent type = engine.createComponent(TypeComponent.class);
         CollisionComponent colComp = engine.createComponent(CollisionComponent.class);
         BulletComponent bul = engine.createComponent(BulletComponent.class);
+        AnimationComponent animCom = engine.createComponent(AnimationComponent.class);
+        StateComponent stateCom = engine.createComponent(StateComponent.class);
 
         b2dbody.body = bodyFactory.makeCirclePolyBody(x, y, BULLET_RADIUS, BodyFactory.STONE, BodyType.DynamicBody, true);
         b2dbody.body.setBullet(true); // increase physics computation to limit body travelling through other objects
@@ -287,12 +296,18 @@ public class LevelFactory {
         bul.xVel = xVel;
         bul.yVel = yVel;
 
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(0.05f, Utils.spriteSheetToFrames(atlas.findRegion("FlameSpriteAnimation"), 7, 1));
+        anim.setPlayMode(Animation.PlayMode.LOOP);
+        animCom.animations.put(0, anim);
+
         entity.add(colComp);
         entity.add(bul);
         entity.add(b2dbody);
         entity.add(position);
         entity.add(texture);
         entity.add(type);
+        entity.add(animCom);
+        entity.add(stateCom);
 
         engine.addEntity(entity);
         return entity;

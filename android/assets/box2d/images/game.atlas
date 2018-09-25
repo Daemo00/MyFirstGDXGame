@@ -1,8 +1,56 @@
-
 game.png
 format: RGBA8888
 filter: MipMapLinearLinear,MipMapLinearLinear
 repeat: none
+FlameSpriteAnimation
+  rotate: false
+  xy: 1, 101
+  size: 168, 24
+  orig: 168, 24
+  offset: 0, 0
+  index: -1
+flame_a
+  rotate: false
+  xy: 1, 35
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+flame_a
+  rotate: false
+  xy: 67, 35
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+flame_a
+  rotate: false
+  xy: 133, 35
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+flame_a
+  rotate: false
+  xy: 199, 61
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 4
+flame_a
+  rotate: false
+  xy: 265, 61
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 5
+flame_a
+  rotate: false
+  xy: 331, 61
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 6
 enemy
   rotate: false
   xy: 1, 1
@@ -10,9 +58,23 @@ enemy
   orig: 32, 32
   offset: 0, 0
   index: -1
+platform
+  rotate: false
+  xy: 199, 43
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+waterdrop
+  rotate: false
+  xy: 260, 43
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: -1
 player
   rotate: false
-  xy: 35, 1
+  xy: 397, 93
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

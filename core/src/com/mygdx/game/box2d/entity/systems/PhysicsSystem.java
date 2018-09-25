@@ -31,7 +31,7 @@ public class PhysicsSystem extends IteratingSystem {
         super.update(deltaTime);
         world.step(deltaTime, 6, 2);
 
-        //Entity Queue
+        // Entity Queue
         for (Entity entity : bodiesQueue) {
             TransformComponent tfm = tm.get(entity);
             Box2DBodyComponent bodyComp = bm.get(entity);
