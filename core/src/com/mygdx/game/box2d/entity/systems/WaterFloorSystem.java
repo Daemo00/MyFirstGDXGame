@@ -29,5 +29,9 @@ public class WaterFloorSystem extends IteratingSystem {
         speed = speed > 1 ? 1 : speed;
 
         bod.setTransform(bod.getPosition().x, bod.getPosition().y + speed, bod.getAngle());
+        // make sure water doesn't get too far behind
+        if (bod.getPosition().y < currentyLevel - 50) {
+            bod.setTransform(bod.getPosition().x, currentyLevel - 50, bod.getAngle());
+        }
     }
 }

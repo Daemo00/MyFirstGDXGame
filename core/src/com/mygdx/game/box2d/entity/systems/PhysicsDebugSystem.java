@@ -13,7 +13,7 @@ public class PhysicsDebugSystem extends IteratingSystem {
     private Box2DDebugRenderer debugRenderer;
     private World world;
     private OrthographicCamera camera;
-    private boolean debug = false;
+    private boolean debug = true;
 
     public PhysicsDebugSystem(World world, OrthographicCamera camera) {
         super(Family.all().get());

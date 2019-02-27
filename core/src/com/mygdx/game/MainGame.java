@@ -128,7 +128,7 @@ public class MainGame extends Game {
         screen.dispose();
     }
 
-    public MyPreferences getPreferences() {
+    MyPreferences getPreferences() {
         return preferencesScreen;
     }
 }

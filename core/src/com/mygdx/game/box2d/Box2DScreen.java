@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,6 +22,7 @@ import com.mygdx.game.box2d.entity.systems.PhysicsSystem;
 import com.mygdx.game.box2d.entity.systems.PlayerControlSystem;
 import com.mygdx.game.box2d.entity.systems.RenderingSystem;
 import com.mygdx.game.box2d.entity.systems.WallSystem;
+import com.mygdx.game.box2d.entity.systems.WaterFloorSystem;
 
 public class Box2DScreen extends GenericGameScreen {
     private final Music music;
@@ -39,6 +41,10 @@ public class Box2DScreen extends GenericGameScreen {
         assetManager.queueAddSounds();
         assetManager.manager.finishLoading();
         atlas = assetManager.manager.get("box2d/images/game.atlas", TextureAtlas.class);
+        Texture texture = assetManager.manager.get(assetManager.floorImage, Texture.class);
+        atlas.addRegion("reallybadlydrawndirt", texture, texture.getWidth(), texture.getHeight(), texture.getWidth(), texture.getHeight());
+        texture = assetManager.manager.get(assetManager.waterImage, Texture.class);
+        atlas.addRegion("water", texture, 0, 0, texture.getWidth() * 2, texture.getHeight() * 2);
         ping = assetManager.manager.get("box2d/sounds/ping.wav", Sound.class);
         boing = assetManager.manager.get("box2d/sounds/boing.wav", Sound.class);
         music = assetManager.manager.get("box2d/music/Rolemusic_-_pl4y1ng.mp3", Music.class);
@@ -64,16 +70,13 @@ public class Box2DScreen extends GenericGameScreen {
 
         engine.addSystem(new BulletSystem(player));
 
-        //engine.addSystem(new WaterFloorSystem(player));
+        engine.addSystem(new WaterFloorSystem(player));
         int floorWidth = (int) (40 * RenderingSystem.PIXELS_PER_METRE);
         int floorHeight = (int) (1 * RenderingSystem.PIXELS_PER_METRE);
         TextureRegion floorRegion = Utils.makeTextureRegion(floorWidth, floorHeight, "11331180");
         lvlFactory.createFloor(floorRegion);
 
-        int wFloorWidth = (int) (40 * RenderingSystem.PIXELS_PER_METRE);
-        int wFloorHeight = (int) (10 * RenderingSystem.PIXELS_PER_METRE);
-        TextureRegion wFloorRegion = Utils.makeTextureRegion(wFloorWidth, wFloorHeight, "11113380");
-        lvlFactory.createWaterFloor(wFloorRegion);
+        lvlFactory.createWaterFloor();
 
         engine.addSystem(new WallSystem(player));
         int wallWidth = (int) (1 * RenderingSystem.PIXELS_PER_METRE);

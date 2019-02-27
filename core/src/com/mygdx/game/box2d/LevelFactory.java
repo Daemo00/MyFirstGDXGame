@@ -32,7 +32,8 @@ public class LevelFactory {
     private static final int PLAYER_RADIUS = 1;
     private static final float BULLET_RADIUS = 0.2f;
     private final TextureRegion platformTex;
-    public World world;
+    private final TextureRegion waterTex;
+    World world;
     public int currentLevel = 0;
     private BodyFactory bodyFactory;
     private PooledEngine engine;
@@ -48,15 +49,16 @@ public class LevelFactory {
         world.setContactListener(new Box2DContactListener());
         bodyFactory = BodyFactory.getInstance(world);
         // create a new SimplexNoise (size,roughness,seed)
-        floorTex = Utils.makeTextureRegion(40 * RenderingSystem.PIXELS_PER_METRE, 0.5f * RenderingSystem.PIXELS_PER_METRE, "111111FF");
+        floorTex = atlas.findRegion("reallybadlydrawndirt");
         enemyTex = atlas.findRegion("waterdrop");
         bulletTex = Utils.makeTextureRegion(1 * RenderingSystem.PIXELS_PER_METRE, 1 * RenderingSystem.PIXELS_PER_METRE, "331111FF");
         platformTex = atlas.findRegion("platform");
+        waterTex = atlas.findRegion("water");
     }
 
 
     /** Creates a pair of platforms per level up to yLevel
-     * @param ylevel
+     * @param ylevel ylevel
      */
     public void generateLevel(int ylevel) {
         while (ylevel > currentLevel) {
@@ -130,7 +132,7 @@ public class LevelFactory {
         engine.addEntity(entity);
     }
 
-    public void createFloor(TextureRegion tex) {
+    void createFloor(TextureRegion tex) {
         Entity entity = engine.createEntity();
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
         b2dbody.body = bodyFactory.makeBoxBody(0, 0, RenderingSystem.getScreenSizeInMeters().x, 1, BodyFactory.STONE, BodyType.StaticBody, false);
@@ -151,9 +153,9 @@ public class LevelFactory {
     /**
      * Creates the water entity that steadily moves upwards towards player
      *
-     * @return
+     * @return entity
      */
-    public Entity createWaterFloor(TextureRegion tex) {
+    Entity createWaterFloor() {
         Entity entity = engine.createEntity();
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
         TransformComponent position = engine.createComponent(TransformComponent.class);
@@ -162,7 +164,7 @@ public class LevelFactory {
         WaterFloorComponent waterFloor = engine.createComponent(WaterFloorComponent.class);
 
         type.type = TypeComponent.ENEMY;
-        texture.region = tex;
+        texture.region = waterTex;
         b2dbody.body = bodyFactory.makeBoxBody(0, -10, RenderingSystem.getScreenSizeInMeters().x, 10, BodyFactory.STONE, BodyType.KinematicBody, true);
         position.position.set(0, -10, 0);
         entity.add(b2dbody);
@@ -178,7 +180,7 @@ public class LevelFactory {
         return entity;
     }
 
-    public Entity createPlayer(TextureRegion tex, OrthographicCamera cam) {
+    Entity createPlayer(TextureRegion tex, OrthographicCamera cam) {
 
         Entity entity = engine.createEntity();
         Box2DBodyComponent b2dbody = engine.createComponent(Box2DBodyComponent.class);
@@ -221,7 +223,7 @@ public class LevelFactory {
         return entity;
     }
 
-    public void createWalls(TextureRegion wallRegion) {
+    void createWalls(TextureRegion wallRegion) {
 
         createWall(wallRegion, 0);
         createWall(wallRegion, RenderingSystem.getScreenSizeInMeters().x);
